@@ -1,0 +1,4 @@
+name = "ContextualOptimization"
+uuid = "e3315153-cfaa-41e1-8986-471f7667b9bb"
+authors = ["RedaOHB <you@example.com>"]
+version = "0.1.0"
