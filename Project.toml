@@ -1,4 +1,7 @@
 name = "ContextualOptimization"
 uuid = "e3315153-cfaa-41e1-8986-471f7667b9bb"
 authors = ["RedaOHB <you@example.com>"]
-version = "0.1.0"
+version = "0.1.0" 
+
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
