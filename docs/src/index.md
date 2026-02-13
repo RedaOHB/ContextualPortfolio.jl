@@ -15,12 +15,12 @@ Consider the standard mean-variance model. The contextual optimization problem c
 ```math
 \begin{equation*}
 \begin{split}
-    \min_x \  \quad & - \boldsymbol{\mu}_{r\,|\,s}^{T} . \boldsymbol{x} + \eta \boldsymbol{x}^{T} \boldsymbol{Sigma}_{r\,|\,s} \boldsymbol{x}\\
+    \min_x \  \quad & - \boldsymbol{\mu}_{r\,|\,s}^{T} . \boldsymbol{x} + \eta \boldsymbol{x}^{T} \boldsymbol{\Sigma}_{r\,|\,s} \boldsymbol{x}\\
     \text{s.t.} \quad & \boldsymbol{1}^{T} \boldsymbol{x} = 1\\
     & \boldsymbol{x} \geq \boldsymbol{0},
 \end{split}
 \end{equation*}
 ```
 where: 
-* $\boldsymbol{mu}_{r\,|\,s}$ and $\boldsymbol{Sigma}_{r\,|\,}s$ representes conditional expected return and conditional covariance matrix given context $s$ respectively.
+* $\boldsymbol{\mu}_{r\,|\,s}$ and $\boldsymbol{\Sigma}_{r\,|\,}s$ representes conditional expected return and conditional covariance matrix given context $s$ respectively.
 * $\boldsymbol{x}$ is the vector of portfolio weights.                
