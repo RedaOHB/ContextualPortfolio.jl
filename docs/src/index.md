@@ -27,4 +27,22 @@ where:
 * $\mathbf{\Sigma}_{r|s}$ representes conditional covariance matrix given context $s$.
 * $\mathbf{x}$ is the vector of portfolio weights.              
 
+## Installation
+```ContextualOptimization.jl``` can be installed using Julia's package manager:
+```julia
+using Pkg
+add.Pkg(ContextualOptimization)
+```
 
+## Basic usage
+Using ```ContextualOptimization.jl``` follows a simple three-step process:
+1. Prepare your asset returns and contextual data
+2. Specify an optimization model
+3. Call the solver function with your parameters
+
+For detailed examples and comprehensive tests, see the [Tutorial](@ref) page. Additional test cases demonstrating package functionality can be found in the [test directory](https://github.com/RedaOHB/ContextualOptimization.jl/test).
+
+## Algorithm description
+```ContextualOptimization.jl``` incorporates periodic portfolio rebalancing using a rolling window approach. This allows the portfolio to adapt dynamically to changing market conditions while maintaining computational efficiency.
+ 
+A complete description of the methodology is provided in the [Method](@ref) section.
