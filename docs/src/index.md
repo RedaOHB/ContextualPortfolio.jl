@@ -46,3 +46,8 @@ For detailed examples and comprehensive tests, see the [Tutorial](@ref) page. Ad
 ```ContextualOptimization.jl``` incorporates periodic portfolio rebalancing using a rolling window approach. This allows the portfolio to adapt dynamically to changing market conditions while maintaining computational efficiency.
  
 A complete description of the methodology is provided in the [Method](@ref) section.
+
+## Documentation Overview
+
+## Citation
+
