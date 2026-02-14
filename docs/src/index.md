@@ -23,7 +23,8 @@ Consider the standard mean-variance model. The contextual optimization problem c
 ```
 
 where: 
-$\mathbf{\mu}_{r\,|\,s}$ and $\mathbf{\Sigma}_{r\,|\,s}$ representes conditional expected return and conditional covariance matrix given context $s$ respectively.
+* $\mathbf{\mu}_{r\,|\,s}$ is conditional expected return given context $s$.
+* $\mathbf{\Sigma}_{r\,|\,s}$ representes conditional covariance matrix given context $s$.
 * $\boldsymbol{x}$ is the vector of portfolio weights.              
 
 
