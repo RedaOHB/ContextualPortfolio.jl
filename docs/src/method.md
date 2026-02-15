@@ -89,4 +89,4 @@ For global portfolio evaluation, the algorithm computes summary statistics aggre
 - **Average HHI**: Mean diversification index across rebalancing periods
 - **Average turnover**: Mean portfolio turnover across consecutive rebalancing periods
 
-These aggregated metrics provide a comprehensive assessment of the strategy's performance, risk characteristics, and trading behavior over the backtest horizon.
+These aggregated metrics provide a comprehensive assessment of the strategy's performance, risk characteristics, and trading behavior over the backtest horizon
