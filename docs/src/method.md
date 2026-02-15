@@ -76,3 +76,17 @@ where $R_{f}$ represents the risk-free rate.
 $$\Omega = \frac{\sum_{t=1}^{T} \max(R_{t} - \tau, 0)}{\sum_{t=1}^{T} \max(\tau - R_{t}, 0)}$$
 
 At each rebalancing period, the algorithm advances the rolling window, re-estimates the conditional moments with updated data, and repeats the optimization process.
+
+#### Aggregated Performance Analysis
+For global portfolio evaluation, the algorithm computes summary statistics aggregated over the entire out-of-sample period. These aggregated metrics include:
+
+- **Mean return**: Average of portfolio returns across all validation periods
+- **Volatility**: Standard deviation of the aggregated return series
+- **CVaR**: Conditional Value-at-Risk computed on the full return distribution
+- **Sharpe ratio**: Risk-adjusted return over the entire validation period
+- **Omega ratio**: Gain-loss ratio computed on the aggregated returns
+- **Average number of assets**: Mean number of active positions across rebalancing periods
+- **Average HHI**: Mean diversification index across rebalancing periods
+- **Average turnover**: Mean portfolio turnover across consecutive rebalancing periods
+
+These aggregated metrics provide a comprehensive assessment of the strategy's performance, risk characteristics, and trading behavior over the backtest horizon.
