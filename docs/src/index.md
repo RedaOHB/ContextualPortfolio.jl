@@ -1,4 +1,4 @@
-# ContextualOptimization.jl 
+# [ContextualOptimization.jl documentation](@id Home)
 * A julia package for contextual optimization and backtesting * 
 
 ## Overview

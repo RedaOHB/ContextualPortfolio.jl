@@ -1,3 +1,5 @@
+# [Method](@id Method)
+
 `ContextualOptimization.jl` implements a contextual portfolio optimization framework based on a rolling window backtesting approach with periodic rebalancing. The method operates in two key phases:
 1. **Estimation phase**: Model training and parameter estimation using historical data.
 2. **Validation phase**: Out-of-sample performance evaluation.
