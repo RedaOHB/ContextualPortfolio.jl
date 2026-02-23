@@ -48,6 +48,15 @@ For detailed examples and comprehensive tests, see the [Tutorial](@ref) page. Ad
 A complete description of the methodology is provided in the [Method](@ref) section.
 
 ## Documentation Overview
+```@contents
+Pages = [
+    "index.md",
+    "method.md",
+    "tutorial.md",
+    "api.md",
+]
+Depth = 2
+```
 
 ## Citation
 

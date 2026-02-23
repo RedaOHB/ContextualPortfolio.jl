@@ -9,7 +9,7 @@ makedocs(
     modules = [ContextualOptimization],
     pages = [
         "Home" => "index.md",
-        "Getting Started" => "getting_started.md",
+        "Method" => "method.md",
         "Tutorial" => "tutorial.md",
         "API Reference" => "api.md",
         "Examples" => "examples.md"
