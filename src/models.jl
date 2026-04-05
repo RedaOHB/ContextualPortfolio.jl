@@ -1,15 +1,15 @@
-#=
+"""
   mean_variance_model(μ, Σ, η)
 
   defines and solves the mean–variance portfolio optimization problem, returning the optimal asset weights.
   
-  /*\ Parameters:
+  # Parameters:
 
-  * `μ` is the mean vector of data
-  * `Σ` is the covariance matrix of data
-  * `η` the risk aversion parameter 
+   - `μ` is the mean vector of data
+   - `Σ` is the covariance matrix of data
+   - `η` the risk aversion parameter 
 
-  /*\ mathematic formula:
+  # mathematic formula:
 
   Assuming a set of 𝑛 assets with expected returns μ = (μ₁,μ₂,…,μₙ) and covariance matrix of returns Σ, the mean_variance model finds 
   the asset weights 𝐱 = (x₁,x₂,…,xₙ) that solve the following quadratic programming problem:
@@ -17,7 +17,7 @@
                                        minₓ  -μᵀ𝐱 + η𝐱ᵀΣ𝐱 
                                        s.t   1ᵀ𝐱 = 1
                                                𝐱 ≥ 0
-=#
+"""
 
 
 function mean_variance_model(μ, Σ, η)

@@ -1,23 +1,23 @@
-#= 
+""" 
   split_sample(data, start_date, estimation_horizon, validation_horizon)
 
   extract the estimation and evaluation data (in-sample and out-of-sample) from the full data starting on "start_date".
   Also calculate the mean vector and covariance matrix of training data for later usage.
   
-  /*\ Parameters :
+  # Parameters :
 
-  * `data` represents the historical returns
-  * `start_date` is the date on which estimation phase began
-  * `estimation_horizon` is the period of training the model (frequency: monthly)
-  * `validation_horizon` is the periode of testing (frequency: monthly)
+   - `data` represents the historical returns
+   - `start_date` is the date on which estimation phase began
+   - `estimation_horizon` is the period of training the model (frequency: monthly)
+   - `validation_horizon` is the periode of testing (frequency: monthly)
 
-  /*\ Results :
+  # Results :
 
-  * `Train_data` is the estimation set of the current period
-  * `Test_data` is the validation set of the currect period 
-  * `μ_train` represents the mean vector of training data
-  * `Σ_train` represents the covariance matrix of training data  
-=#
+   - `Train_data` is the estimation set of the current period
+   - `Test_data` is the validation set of the currect period 
+   - `μ_train` represents the mean vector of training data
+   - `Σ_train` represents the covariance matrix of training data  
+"""
 
 function split_sample(Data, start_date, estimation_horizon, validation_horizon)
     estimation_horizon = estimation_horizon/12  # convert the estimation_horizon to year frequency

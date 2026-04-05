@@ -32,33 +32,89 @@ ContextualOptimization.jl requires two main data inputs, returns and contextual 
 2. **Contex** (DataFrame): Contextual features (`T * K` matrix, where `K` is number of features)  
 
 ### Loading real Data
-In practice, **daily historical returns** are loading from the Data Finance Database `Tiingo` using specify API key. To make this load easier, we have created `historical_returns` function, where specialized key is introduce inside it. All what you have to do is call this function with its appropriate arguments:
+
+#### Loading Returns Data
+
+**Option 1: Using Tiingo API**
+
+You can load historical returns from various sources. For convenience, we provide a helper function to load historical returns from the Tiingo financial data API. This function is available in the [test directory](https://github.com/RedaOHB/ContextualOptimization.jl/test/Data).
 ```julia 
-Returns = historical_returns(Assets, start_date, end_date)
+# Include the data loading utilities
+  include("test/data/historical_returns.jl")  
+
+# Load historical returns from Tiingo
+  Assets = ["AAPL", "MSFT", "GOOGL", "AMZN", "META"]
+  start_date = Date(2015, 1, 1)
+  end_date = Date(2024, 1, 1)
+  Returns = historical_returns(Assets, start_date, end_date)
 ```      
-with:
-* `Assets` : set of assets used to construct portfolio.
-* `start_date` and `end_date` : begin and stop dates to collections data.
 
-For more details about the main `historical_returns` function, take a look to [test directory](https://github.com/RedaOHB/ContextualOptimization.jl/test).
+!!! note "API Key Required"
+    The `historical_returns` function requires a Tiingo API key. You can obtain a free API key at [https://www.tiingo.com](https://www.tiingo.com). The function reads the API key from an environment variable or configuration file. See `test/data/README.md` for setup instructions.
 
-**Contxtual features** are reported on a menthly basis and where downloaded from the ***Economic Research : Federal Research Bank of St. Louis*** in the web site http://research.stlouisfed.org. Its availables on `.xlsx` or `.csv` extensions. One file correspond to one contextual factor, and each file is reading by:
-* For `.xlsx` extension:
+**Option 2: Load from CSV Files**
+
+If you have pre-downloaded data:
 ```julia
-xf = XLSX.readxlsx("file_name.xlsx")  # read file
-sheet = xf["Monthly"]  # select the right sheet
-xf = sheet[:]  
-headers = Symbol.(xf[1, :]) 
-data = DataFrame([xf[2:end, i] for i in 1:size(xf, 2)], headers)  # transform to DataFrame
-```
-* For `.csv` extension:
-```julia
-data = CSV.read("file_name.csv", DataFrame)  # read file and transform to DataFrame
+using CSV, DataFrames
+
+# Load returns from CSV
+  Returns = CSV.read("returns.csv", DataFrame)
 ```
 
-For more clarity, you join all contextual data on the same DataFrame to after uses on the main function:
+#### Loading Contextual Features
+
+Contextual features can include macroeconomic indicators, market variables, or other relevant data:
 ```julia
-context = innerjoin(data_1,data_2,data_3; on = :Date_column)  # on=:Date_column --> date alignement
+# Example: Load from XLSX file (e.g., from FRED database)
+using XLSX
+
+# Load contextual data
+  xf = XLSX.readxlsx("file_name.xlsx")
+  sheet = xf["sheet_name"]
+  data = sheet[:]
+# Convert to DataFrame
+  headers = Symbol.(data[1, :])
+  feature = DataFrame([data[2:end, i] for i in 1:size(data, 2)], headers)
+```
+
+Or load from `csv` file
+```julia
+feature = CSV.read("file_name.csv", DataFrame)  # read file and transform to DataFrame
+```
+
+#### Aligning data by date
+
+Ensure that all contextual data are aligned for later manipulations:
+```julia
+context = innerjoin(feature_1,feature_2,feature_3; on = :Date_column)  # on=:Date_column --> Join on date column
+```
+
+For the optimization process, returns and context will be aligned by date within the main function. If historical returns and context are represented on a daily basis, the alignment is straightforward. If the context is represented on a monthly basis, the monthly values are duplicated for each day of the corresponding month.
+
+
+### Example: Synthetic Data
+
+For testing purposes, you can generate synthetic data:
+```julia
+using Random
+Random.seed!(123)
+
+# Generate synthetic data
+  T = 500  # Number of time periods
+  N = 10   # Number of assets
+  K = 3    # Number of contextual features
+
+# Generate synthetic returns (you would load your own data here)
+  Assets = ["AAPL", "AMGN", "AXP", "BA", "CAT", "CRM", "CSCO", "CVX", "DIS", "DOW"]  # Example of assets
+  data = randn(T, N) * 0.01 .+ 0.0005  # Daily returns with mean ~0.05% and volatility ~1%
+  returns = DataFrame(data, Assets)  # convert to DataFrame
+
+# Generate contextual features (e.g., market indicators, economic variables)
+  Features = ["CPI", "IPI", "GPD"]  # Exemple of features
+  data = randn(T, K)
+  context = DataFrame(data, Features)
+
 ```
 
 ## Step 2: Specify an Optimization Model
@@ -75,9 +131,11 @@ This maximize the return and minimize the risk of portfolio.
 model = mean_variance_Box_Uncertainty(μ, Σ, η, data)  # Mean Variance with Box Uncertainty (MVBU)
 model = mean_variance_Ellipsoidale_Uncertainty(μ, Σ, η, data)  # Mean Variance with Ellipsoidale Uncertainty (MVEU)
 ```
-This accounts for uncertainty in the parameter estimates.
+These account for uncertainty in parameter estimates, making the portfolio more robust.
 
-The risk aversion parameter `η` controls the trade-off between return and risk. Higher values lead to more conservative portfolios.
+The risk aversion parameter `η` controls the trade-off between return and risk: 
+- **Higher values** (e.g., 2.0, 5.0): More conservative portfolios with lower volatility
+- **Lower values** (e.g., 0.1, 0.5): More aggressive portfolios seeking higher returns
 
 ## Step3: Run the Backtest
 Now we can run the backtest with our prepared data and chosen model. Before calling `backtest` function, we define the arguments structure
@@ -96,12 +154,12 @@ Now we can run the backtest with our prepared data and chosen model. Before call
 The structure is declared like this:
 ```julia
 Parameter = BacktestParameters(
-    estimation_horizon = 48,  # 4 years of estimation 
+    estimation_horizon = 48,  # 4 years of estimation (48 months) 
     validation_horizon = 1,  # 1 month of validation
     data,
     context,
     model,
-    η = 1,                 # moderate value
+    η = 1,                 # moderate value of risk aversion
     start_date = Date(2005,01,01)
     end_date = Date(2020,06,30)
 )
@@ -112,7 +170,144 @@ Now, we solve the optimiztion problem by calling the main function:
 portfolios, portfolio_performance, global_performance = backtest_portfolio(Parameter)
 ```
 
+## Step 4: Analyze Results
 
+### View Performance Metrics
+
+The backtest returns three results object containing all portfolio constructed within rolling window approach, performance metrics of each portfolio and global performance:
+```julia
+println(" Performance metrics of all portfolios:")
+println(portfolio_performance)
+```
+
+### Analyze Portfolio Composition
+
+Plot the changes of portfolio composition over time (turnover)
+```julia
+using plot
+
+dates = start_date:Month(evaluation_horizon):end_date
+
+plot(portfolio_performance[:,"Turnover"], dates,
+     xlabel="Dates",
+     ylabel="Turnover",
+     title="Portfolio composition Evolution",
+     legend=false,
+     alpha=0.6)
+```
+
+### Examine Diversification
+
+Plot the Herfindahl-Hirschman index (HHI) over time
+```julia
+plot(portfolio_performance[:,"HHI"], dates,
+     xlabel="Dates",
+     ylabel="HHI",
+     title="Portfolio Diversification (HHI)",
+     linewidth=2)
+```
+Lower HHI values indicate better diversification (minimum is 1/N for equal weights).
+
+### Visualize Portfolio Returns
+
+Plot the cumulative return over time
+```julia
+plot(portfolio_performance[:,"Returns"], dates,
+     xlabel="Dates",
+     ylabel="Cumulative Return",
+     title="Portfolio Performance",
+     linewidth=2)
+```
+
+### View global performance
+
+Evaluate performance metrics of agregated serie of returns over the rolling window approach
+
+```julia
+Println(" Global performance:")
+println("  Mean Return: ", round(global_performance["Mean_return"] * 100, digits=2), "%")
+println("  Volatility: ", round(global_performance["Volatility"] * 100, digits=2), "%")
+println("  Sharpe Ratio: ", round(global_performance["Sharpe_ratio"], digits=2))
+println("  CVaR (95%): ", round(global_performance["CVaR"] * 100, digits=2), "%")
+println("  Omega Ratio: ", round(global_performance["Omega_ratio"], digits=2))
+println("  Average number of assets: ", round(global_performance["No_Assets"], digits=3))  
+println("  Average HHI: ", round(global_performance["HHI"], digits=3))
+println("  Average Turnover: ", round(global_performance["Turnover"], digits=3))
+```
+
+## Complete exemple
+
+Here's a complete working exemple: 
+```julia
+using ContextualOptimization
+using Random, Plots
+
+# Generate synthetic data
+ # Let generate data for period between 01 january 2005 and 31 december 2024
+ # This correspond to 5033 trading days (for historical returns)
+ # Also correspond to 240 monthly observations (for contextual features)
+
+  Random.seed!(42)
+  T1 = 5033
+  T2 = 240
+  N = 10
+  K = 3
+
+  # Generate synthetic returns (you would load your own data here)
+    Assets = ["AAPL", "AMGN", "AXP", "BA", "CAT", "CRM", "CSCO", "CVX", "DIS", "DOW"]  # Example of assets
+    data = randn(T1, N) * 0.01 .+ 0.0005  # Daily returns with mean ~0.05% and volatility ~1%
+    returns = DataFrame(data, assets)  # convert to DataFrame
+
+  # Generate contextual features (e.g., market indicators, economic variables)
+    Features = ["CPI", "IPI", "GPD"]  # Exemple of features
+    data = randn(T2, K)
+    context = DataFrame(data, Features)
+
+# Specify model
+  model = mean_variance_model # Or mean_variance_Box_Uncertainty or mean_variance_Ellipsoidale_Uncertainty
+
+# Run backtest
+  Parameter = BacktestParameters(
+    estimation_horizon = 48,  # 4 years of estimation (48 months) 
+    validation_horizon = 1,  # 1 month of validation
+    data,
+    context,
+    model,
+    η = 1,                 # moderate value of risk aversion
+    start_date = Date(2005,01,01)
+    end_date = Date(2024,12,31)
+  )
+
+portfolios, portfolio_performance, global_performance = backtest_portfolio(Parameter)
+
+# Evaluate performance    
+  println("  Sharpe Ratio: ", round(global_performance["Sharpe_ratio"], digits=2))
+  println("  Average HHI: ", round(global_performance["HHI"], digits=3))
+
+# Visualize cumulative returns
+  dates = start_date:Month(evaluation_horizon):end_date
+
+  plot(portfolio_performance[:,"Returns"], dates,
+     xlabel="Dates",
+     ylabel="Cumulative Return",
+     title="Portfolio Performance",
+     linewidth=2)
+
+```
+
+## Next steps
+
+- Explore the [API Reference](@ref) for detailed function documentation
+- Read the [Method](@ref) section for mathematical details
+- Try different contextual features and optimization models
+
+## Data Sources
+
+Contextual features can be obtained from:
+- **FRED** (Federal Reserve Economic Data): https://fred.stlouisfed.org
+- **Yahoo Finance**: Market indices and volatility measures
+- **Quandl**: Economic and financial datasets
+- **World Bank**: International economic indicators
 
 
 

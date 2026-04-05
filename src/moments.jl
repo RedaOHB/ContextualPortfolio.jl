@@ -1,15 +1,15 @@
-#=
+"""
   conditional_moments(data, Contextual_information, last_context, first_context)
 
   estimates the joint distribution of returns and contextual variables, and computes the conditional mean vector and conditional covariance matrix of returns given the provided context.
 
-  /*\ Parameters:
+  # Parameters:
 
-  * `data` contains the joints data (returns + context)
-  * `contextual_information` is the conditioning variables
-  * `last_context` index of the last observed context of the current period
-  * `first_context` index of the first observed context of the current period 
-=#
+   - `data` contains the joints data (returns + context)
+   - `contextual_information` is the conditioning variables
+   - `last_context` index of the last observed context of the current period
+   - `first_context` index of the first observed context of the current period 
+"""
 
 
 function conditional_moments(data, contextual_information, last_context, first_context)

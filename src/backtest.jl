@@ -21,15 +21,15 @@ struct  BacktestParameters
 end
 
 
-#=
+"""
   backtest_portfolio(params::BacktestParameters)
 
   runs a portfolio backtest using a rolling rebalancing strategy (rolling window). Its parameters are provided through the "BacktestParameters" structure.
   The function returns three objects:
-  * the sequence of portfolios obtained over the rolling window
-  * the corresponding performance measures for each portfolio
-  * the aggregated (global) performance over the full evaluation period
-=#
+   - the sequence of portfolios obtained over the rolling window
+   - the corresponding performance measures for each portfolio
+   - the aggregated (global) performance over the full evaluation period
+"""
 
 function backtest_portfolio(params::BacktestParameters)
 
@@ -97,7 +97,7 @@ function backtest_portfolio(params::BacktestParameters)
 
     # evaluate the global performance (annual frequency)
       # stores the global performance metrics
-        global_preformance = DataFrame(Model=String[], Mean_return=Float64[], Volatility=Float64[], CVaR=Float64[], Sharpe_ratio=Float64[], Omega_ratio=Float64[], No_Assets=Float64[], HHI=Float64[]) 
+        global_performance = DataFrame(Model=String[], Mean_return=Float64[], Volatility=Float64[], CVaR=Float64[], Sharpe_ratio=Float64[], Omega_ratio=Float64[], No_Assets=Float64[], HHI=Float64[], Turnover=Float64[]) 
       
       aggregated_returns = portfolio_performance[:,"Return"]
 
@@ -111,11 +111,12 @@ function backtest_portfolio(params::BacktestParameters)
         Sharpe = Sharpe_ratio(aggregated_returns, 0) * sqrt(12/params.evaluation_horizon)
       # Omega ratio
         Ω = Omega_ratio(aggregated_returns, 0)
-      # Average of assets number and HHI
+      # Average of assets number, HHI and Turnover
         No_Assets = mean(portfolio_performance[:,"No_Assets"])
         HHI = mean(portfolio_performance[:,"HHI"])
+        Turnover = mean(portfolio_performance[:,"Turnover"])
 
-      push!(global_performance, (Model, μ, σ, C_VaR, Sharpe, Ω, No_Assets, HHI))
+      push!(global_performance, (Model, μ, σ, C_VaR, Sharpe, Ω, No_Assets, HHI, Turnover))
       
     return portfolios, portfolio_performance, global_performance
 
