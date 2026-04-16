@@ -34,8 +34,9 @@ returns = historical_returns(Assets, start_date, end_date, Api_key, frequency)
 context = context_data(file_path, file_type) 
 # Define optimization model
 model = optimize_mv # Mean Variance model 
-# Or optimize_mvbu for Mean Variance with Box Uncertainty 
-# Or optimize_mveu for Mean Variance with Ellipsoïdal Uncertainty 
+# Or "optimize_mvbu" for Mean Variance with Box Uncertainty 
+# Or "optimize_mveu" for Mean Variance with Ellipsoïdal Uncertainty 
+
 # Run backtest 
   # Define the parameters structure 
   Parameters = backtestparameters( 
@@ -49,4 +50,33 @@ model = optimize_mv # Mean Variance model
                end_date = Date(2024,01,01) ) 
   # Call solve function 
   Portfolios, Performace_metrics, Global_performance = backtest_portfolio(Parameters) 
+
+# Evaluate performance
+println("Average return: ", Global_performance.Mean_return[1])
+println("Sharpe ratio: ", Global_performance.Sharpe_ratio[1])
+println("Average HHI: ", Global_performance[1])
 ```
+
+## Methodology
+
+`ContextualOptimization.jl` implements a contextual optimization framework based on conditional moments. Unlike traditional approaches that separate prediction and optimization, this method jointly optimizes portfolio decisions based on contextual features.
+
+### Conditional Moments
+
+The package estimates conditional expected returns and covariance given context $s$:
+
+```math
+\begin{align*}
+  \mu_{r|s} &= \mu_{r} + \Sigma_{rs} (\Sigma_{ss})^{-1} (s - \mu_{s}),\\
+  \Sigma_{r|s} &= \Sigma_{rr} - \Sigma_{rs} (\Sigma_{ss})^{-1} \Sigma_{sr}.
+\end{align*}
+```
+
+### Optimization Models
+
+**Mean-Variance**:
+```julia
+model = optimize_mv(μᵣ_ₛ, \Sigma_{r|s}, η)
+```
+
+
