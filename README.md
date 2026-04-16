@@ -61,7 +61,7 @@ println("Average HHI: ", Global_performance[1])
 
 `ContextualOptimization.jl` implements a contextual optimization framework based on conditional moments. Unlike traditional approaches that separate prediction and optimization, this method jointly optimizes portfolio decisions based on contextual features.
 
-### Conditional Moments
+### Conditional moments
 
 The package estimates conditional expected returns and covariance given context $s$:
 
@@ -72,11 +72,59 @@ The package estimates conditional expected returns and covariance given context 
 \end{align*}
 ```
 
-### Optimization Models
+### Optimization models
 
 **Mean-Variance**:
 ```julia
-model = optimize_mv(μᵣ_ₛ, \Sigma_{r|s}, η)
+model = optimize_mv(μᵣ_ₛ, Σᵣ_ₛ, η)
 ```
+
+**Mean-Variance with Box Uncertainty**:
+```julia
+model = optimize_mvbu(μᵣ_ₛ, Σᵣ_ₛ, η)
+```
+
+**Mean-Variance with Ellipsoidal Uncertainty**:
+```julia
+model = optimize_mveu(μᵣ_ₛ, Σᵣ_ₛ, η)
+```
+
+## Performance metrics
+
+The package computes comprehensive performance metrics:
+
+- **Return Metrics**: mean return and cumulative return
+- **Risk Metrics**: volatility and CVaR
+- **Risk-Adjusted**: Sharpe and Omega ratios
+- **Portfolio Characteristics**: Number of assets, HHI (diversification) and turnove
+
+## Documentation
+
+For detailed documentation, tutorial, and examples, see:
+
+- [**Tutorial**](https://RedaOHB.github.io/ContextualOptimization.jl/stable/tutorial/)
+- [**API Reference**](https://RedaOHB.github.io/ContextualOptimization.jl/stable/api/)
+- [**Methodology**](https://RedaOHB.github.io/ContextualOptimization.jl/stable/method/)
+
+## Data loading 
+
+Helper functions for loading financial data are available in `test/data/`:
+```julia
+include("test/data/data_loading.jl")
+
+# Load historical returns from Tiingo API
+Assets = ["AAPL", "IBM", "GOOGL", "META", "AMZN"]
+returns = historical_returns(Assets, Date(2020,01,01), Date(2024,12,31), api_key, "daily")
+
+# Load contextual features from FRED data
+feature_1 = context_data("CPI.xlsx", "xlsx")
+features_2 = context_data("IPI.xlsx", "xlsx")
+  # Align contextual data
+  context = align(features_1, features_2)
+
+```
+
+See `test/data/README.md` for setup instructions (requires API key).
+
 
 
