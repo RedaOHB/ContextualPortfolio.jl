@@ -24,13 +24,13 @@
   # mathematic formula:  μ = ∏(1 - 𝐑) - 1
 
 """
-function cumulative_return(𝐑) 
+function cumulative_return(𝐑::Vector{Float64}) 
 
     μ = prod(1 .+ 𝐑) - 1
 
     return μ
 end 
-
+  
 
 """
   volatility(𝐑) evaluate the standard deviation of returns 
@@ -42,7 +42,7 @@ end
   # mathematic formula:  σ(𝐑) = √((1/(1-n))*∑(rᵢ - R̄)²) 
       with R̄ = (1/n) * ∑ rᵢ
 """
-function volatility(𝐑)
+function volatility(𝐑::Vector{Float64})
 
     σ = sqrt(sum((𝐑 .- mean(𝐑)).^2)/(length(𝐑)-1))  
 
@@ -61,10 +61,11 @@ end
   # mathematic formula:  CVaRᵦ(L) = E[L|L ≥ VaRᵦ(L)] 
       with L = - 𝐑
 """
-function Conditional_Value_at_Risk(𝐑, β)
+function Conditional_Value_at_Risk(𝐑::Vector{Float64}, β::Float64)
 
-    VaR = quantile(𝐑, 1-β)
-    CVaR = mean(𝐑[𝐑 .<= VaR])
+    losses = - 𝐑
+    VaR = quantile(losses, β)
+    CVaR = mean(losses[losses .>= VaR])
 
     return CVaR
 end 
@@ -80,13 +81,13 @@ end
 
   # mathematic formula:  Sharpe = (E[𝐑] - rf) / σ(𝐑) 
 """
-function Sharpe_ratio(𝐑, rf)
+function Sharpe_ratio(𝐑::Vector{Float64}, rf::Float64)
 
     expected_return = mean(𝐑)
     standard_deviation = sqrt(sum((𝐑 .- mean(𝐑)).^2)/(length(𝐑)-1))
-    Sharpe_ratio = ((expected_return - rf) / standard_deviation) 
+    Sharpe = ((expected_return - rf) / standard_deviation) 
 
-    return Sharpe_ratio
+    return Sharpe
 end
 
 
@@ -100,7 +101,7 @@ end
 
   # mathematic formula:  Ω = ∑ max(Rᵢ - τ, 0) / ∑ max(τ - Rᵢ, 0)
 """
-function Omega_ratio(𝐑, τ)
+function Omega_ratio(𝐑::Vector{Float64}, τ::Float64)
 
     Ω = sum(max.(𝐑 .- τ, 0)) / sum(max.(τ .- 𝐑, 0))
 
@@ -161,8 +162,8 @@ end
   # mathematic formula:  Turnoverₜ = (1/2) * ∑ᵢ|ωₜ₋₁,ᵢ - ωₜ,ᵢ|
 """
 function Turnover(Portfolios)
+
     turnover = [0.5*sum(abs.(Portfolios[i,:] - Portfolios[i-1,:])) for i in 2:size(Portfolios,1)]
-    pushfirst!(turnover, 0)
 
     return turnover
 end

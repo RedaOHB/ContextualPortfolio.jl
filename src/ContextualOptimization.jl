@@ -29,7 +29,8 @@ include("models.jl")
 include("backtest.jl")
 
 # Export the main user-facing functions
-export backtest
+export backtest_portfolio
+export Conditional_Value_at_Risk, Sharpe_ratio, Omega_ratio, Turnover
 
 end # module ContextualOptimization
 

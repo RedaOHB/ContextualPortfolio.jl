@@ -6,16 +6,15 @@
   # Parameters:
 
    - `data` contains the joints data (returns + context)
-   - `contextual_information` is the conditioning variables
+   - `contextual_information` is the conditioning variables 
    - `last_context` index of the last observed context of the current period
    - `first_context` index of the first observed context of the current period 
 """
-
-
+ 
 function conditional_moments(data, contextual_information, last_context, first_context)
-
+ 
     n = size(data,2) 
-    d = size(contextual_information[:,2:end],2) 
+    d = size(contextual_information[:,2:end],2)  
     side_information = Float64.(Matrix(contextual_information[:,2:end]))
        
     # data standardization for consistency     

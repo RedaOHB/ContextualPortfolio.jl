@@ -1,5 +1,5 @@
 """ 
-  split_sample(data, start_date, estimation_horizon, validation_horizon)
+  split_sample(data, start_date, estimation_horizon, evaluation_horizon)
 
   extract the estimation and evaluation data (in-sample and out-of-sample) from the full data starting on "start_date".
   Also calculate the mean vector and covariance matrix of training data for later usage.
@@ -9,7 +9,7 @@
    - `data` represents the historical returns
    - `start_date` is the date on which estimation phase began
    - `estimation_horizon` is the period of training the model (frequency: monthly)
-   - `validation_horizon` is the periode of testing (frequency: monthly)
+   - `evaluation_horizon` is the periode of testing (frequency: monthly)
 
   # Results :
 
@@ -19,9 +19,8 @@
    - `Σ_train` represents the covariance matrix of training data  
 """
 
-function split_sample(Data, start_date, estimation_horizon, validation_horizon)
-    estimation_horizon = estimation_horizon/12  # convert the estimation_horizon to year frequency
-    end_date = start_date + Year(estimation_horizon) - Day(1)  # end of the estimation period
+function split_sample(Data, start_date, estimation_horizon, evaluation_horizon)
+    end_date = start_date + Month(estimation_horizon) - Day(1)  # end of the estimation period
 
     # training data
       # extract the training data
@@ -34,9 +33,9 @@ function split_sample(Data, start_date, estimation_horizon, validation_horizon)
         cov_robust = LinearShrinkage(target = DiagonalUnitVariance(), shrinkage = :auto)
         Σ_train = cov(cov_robust, Train_data)
     
-    # validation (test) data
+    # validation (test) data                       
       # extract the testing data
-        Test_set = filter(row -> end_date + Day(1) <= row.Date <= end_date + Month(validation_horizon), Data) 
+        Test_set = filter(row -> end_date + Day(1) <= row.Date <= end_date + Month(evaluation_horizon), Data) 
         Test_set = Test_set[:,2:end]
         Test_data = Float64.(Matrix(Test_set))
   
