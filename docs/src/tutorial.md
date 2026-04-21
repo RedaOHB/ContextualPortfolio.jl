@@ -268,21 +268,21 @@ using Random, Plots
     context = DataFrame(data, Features)
 
 # Specify model
-  model = mean_variance_model # Or mean_variance_Box_Uncertainty or mean_variance_Ellipsoidale_Uncertainty
+  model = optimize_mv # Or optimize_mvbu or optimize_mveu
 
 # Run backtest
-  Parameter = BacktestParameters(
-    estimation_horizon = 48,  # 4 years of estimation (48 months) 
+  Parameters= backtestParameters(
+    estimation_horizon = 48,  # 48 month of estimation (4 years) 
     validation_horizon = 1,  # 1 month of validation
-    data,
-    context,
-    model,
+    data = returns,
+    context = context,
+    model = model,
     η = 1,                 # moderate value of risk aversion
     start_date = Date(2005,01,01)
     end_date = Date(2024,12,31)
   )
 
-portfolios, portfolio_performance, global_performance = backtest_portfolio(Parameter)
+portfolios, portfolio_performance, global_performance = backtest_portfolio(Parameters)
 
 # Evaluate performance    
   println("  Sharpe Ratio: ", round(global_performance["Sharpe_ratio"], digits=2))

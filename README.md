@@ -81,12 +81,12 @@ model = optimize_mv(μᵣ_ₛ, Σᵣ_ₛ, η)
 
 **Mean-Variance with Box Uncertainty**:
 ```julia
-model = optimize_mvbu(μᵣ_ₛ, Σᵣ_ₛ, η)
+model = optimize_mvbu(μᵣ_ₛ, Σᵣ_ₛ, η, data)
 ```
 
 **Mean-Variance with Ellipsoidal Uncertainty**:
 ```julia
-model = optimize_mveu(μᵣ_ₛ, Σᵣ_ₛ, η)
+model = optimize_mveu(μᵣ_ₛ, Σᵣ_ₛ, η, data)
 ```
 
 ## Performance metrics
@@ -125,6 +125,95 @@ features_2 = context_data("IPI.xlsx", "xlsx")
 ```
 
 See `test/data/README.md` for setup instructions (requires API key).
+
+## Example 
+
+Complete example with synthetic data:
+```julia
+using ContextualOptimization
+using Random, Dates
+
+# Generate synthetic data
+Random.seed!(42)
+n_assets = 10
+n_context = 3
+
+dates = Date(2015, 01, 01):Day(1):Date(2024, 12, 31) # Daily retruns
+returns = DataFrame(Date = dates)
+for i in 1:n_assets
+    returns[!, Symbol("Asset$i")] = randn(n_periods) * 0.01 .+ 0.0005
+end
+
+dates = Date(2015, 01, 01):Monthly(1):Date(2024, 12, 31) # Monthly features
+context = DataFrame(Date = dates)
+for i in 1:n_context
+    context_1[!, Symbol("Feature$i")] = randn(n_periods)
+end
+
+# Run backtest with mean-variance
+Parameters = backtestParameters( 
+                estimation_horizon = 48,  # 48 months of estimation
+                evaluation_horizon = 1,   # 1 month of evaluation
+                returns = returns, 
+                context = context, 
+                model = optimize_mv,            # mean-variance model
+                η = 1.0,                  # risk aversion
+                start_date = Date(2015,01,01), 
+                end_date = Date(2024,12,31) ) 
+
+Portfolios, Portfolio_performance, Global_performance = backtest_portfolio(Parameters)
+
+# Evaluate and visualize
+println("Global performance Metrics:")
+println("  Mean Return: ", round(Global_performance.Mean_return[1] * 100, digits=2), "%")
+println("  Volatility: ", round(Global_performance.Volatility[1] * 100, digits=2), "%")
+println("  Sharpe Ratio: ", round(Global_performance.sharpe_ratio[1], digits=2))
+println(" Diversification index: ", round(Global_performance.HHI[1], digits=2))
+
+# Plot cumulative returns
+dates = Date(2015, 01, 01):Monthly(1):Date(2024, 12, 31) # Monthly features
+
+plot(Portfolio_performance.Return, dates, 
+   xlabel="Dates",
+   ylabel="Cumulative Return",
+   title="Portfolio Performance",
+   linewidth=2)
+
+```
+
+## Requirements
+
+- Julia ≥ 1.6
+- JuMP.jl and an optimization solver (Gurobi)
+- See `Project.toml` for full list of dependencies
+
+## Citation
+
+
+
+## References
+
+The methodology is based on:
+
+- Nguyen et al. (2024). "Contextual Optimization Framework for Portfolio Selection."
+- Markowitz, H. (1952). "Portfolio Selection." *The Journal of Finance*.
+
+## Acknowledgments
+
+- Economic data from [FRED (Federal Reserve Economic Data)](https://fred.stlouisfed.org)
+- Financial data via [Tiingo API](https://www.tiingo.com)
+- Built with [Julia](https://julialang.org) and [JuMP.jl](https://jump.dev)
+
+
+
+
+
+
+
+
+
+
+
 
 
 

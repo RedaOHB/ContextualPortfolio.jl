@@ -32,7 +32,7 @@
     model = optimize_mv  # Mean Variance model
 
     # Define the parameters structure 
-    Parameters = backtestparameters( 
+    Parameters = backtestParameters( 
                 estimation_horizon = 48,  # 48 months of estimation
                 evaluation_horizon = 1,   # 1 month of evaluation
                 returns = returns, 
