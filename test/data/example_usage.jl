@@ -16,7 +16,7 @@ println("\n=== Example 1: Loading historical returns ===\n")
 
 tickers = ["AAPL", "NKE", "GOOGL", "AMZN", "META"]
 start_date = Date(2020, 01, 01)
-end_date = Date(2024, 01, 01)
+end_date = Date(2024, 12, 31)
 frequency = "daily"
 
 # This automatically loads .env if it exists to use the api key
@@ -35,11 +35,8 @@ println(returns)
 
 println("\n\n=== Example 2: Loading contextual features ===\n")
 
-# Exemple with Excel file (adjust path to your data)
-  features = context_data("path_to_the_file", "xlsx")
-
 # Exemple with CSV file (adjust path to your data)
-  features = context_data("path_to_the_file", "csv")
+  context = context_data("test/data/Features_example.csv", "csv")
 
-println(features)
+println(context)
 

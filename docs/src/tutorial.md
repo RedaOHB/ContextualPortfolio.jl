@@ -11,7 +11,7 @@ In this tutorial, you will learn how to:
 3. Run a backtest with rolling window validation
 4. Analyze and interpret the results
 
-## Setup
+## Setup 
 Make sure you have the package installed and loaded:
 ```julia
 using ContextualOptimization  # our package
@@ -45,7 +45,7 @@ You can load historical returns from various sources. For convenience, we provid
 # Load historical returns from Tiingo
   Assets = ["AAPL", "MSFT", "GOOGL", "AMZN", "META"]
   start_date = Date(2015, 01, 01)
-  end_date = Date(2024, 01, 01)
+  end_date = Date(2024, 12, 31)
   Returns = historical_returns(Assets, start_date, end_date, api_key, "daily")
 ```      
 
@@ -56,7 +56,6 @@ You can load historical returns from various sources. For convenience, we provid
 
 If you have pre-downloaded data:
 ```julia
-
 # Load returns from CSV
   Returns = CSV.read("returns.csv", DataFrame)
 ```
@@ -68,12 +67,12 @@ Contextual features can include macroeconomic indicators, market variables, or o
 # Example: Load from XLSX file (e.g., from FRED database)
 
 # Load contextual data
-  feature = context_data("file_path/file.xlsx", "xlsx")
+  feature = context_data("test/data/Features_example.xlsx", "xlsx")
 ```
 
 Or load from `csv` file
 ```julia
-feature = context_data("file_path/file.csv", "csv")  # read file and transform to DataFrame
+feature = context_data("test/data/Features_example.csv", "csv")  # read file and transform to DataFrame
 ```
 
 #### Accepted data frequencies 
@@ -160,10 +159,10 @@ The structure is defined as follows:
 Parameter = BacktestParameters(
     estimation_horizon = 48,  # 4 years of estimation (48 months) 
     evaluation_horizon = 1,  # 1 month of validation
-    returns,
-    context,
-    model,
-    η = 1,                 # moderate value of risk aversion
+    returns = returns,
+    context = context,
+    model = model,
+    η = 1.0,                 # moderate value of risk aversion
     start_date = Date(2005,01,01)
     end_date = Date(2020,06,30)
 )
@@ -272,12 +271,12 @@ using Random, Plots
 
 # Run backtest
   Parameters= backtestParameters(
-    estimation_horizon = 48,  # 48 month of estimation (4 years) 
+    estimation_horizon = 48,  # 48 months of estimation (4 years) 
     validation_horizon = 1,  # 1 month of validation
     data = returns,
     context = context,
     model = model,
-    η = 1,                 # moderate value of risk aversion
+    η = 1.0,                 # moderate value of risk aversion
     start_date = Date(2005,01,01)
     end_date = Date(2024,12,31)
   )

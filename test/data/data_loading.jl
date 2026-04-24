@@ -7,7 +7,7 @@ particularly the Tiingo API for historical returns.
 
 
 """
-   historical_returns(assets, start_date, end_date, API_key, frequency)
+   historical_returns(assets::Vector{String}, start_date::Date, end_date::Date, API_key::Union{String,Nothing}, frequency::String)
 
   Load historical returns from Tiingo API.
 
@@ -46,7 +46,7 @@ particularly the Tiingo API for historical returns.
       DotEnv.load!(joinpath(@__DIR__, "..", "..", ".env"))
   end
 
-function historical_returns(assets::Vector{String}, start_date::Date, end_date::Date, API_key::Union{String,Nothing}, frequency::String)
+function historical_returns(assets, start_date, end_date, API_key, frequency)
 
 
     # Get API key from argument or environment
@@ -145,14 +145,14 @@ end
 
 """
 
-function context_data(file_path::String, file_type::String)
+function context_data(file_path, file_type)
 
     if file_type == "xlsx"
         # Load contextual data from Excel file
           xf = XLSX.readxlsx(file_path)
-          sheet = xf["sheet1"]
-          data = sheet[:]
-        # Convert to DataFrame
+          sheet = xf["Sheet1"]
+          data = sheet[:]   
+        # Convert to DataFrame  
           headers = Symbol.(data[1, :])
           features = DataFrame([data[2:end, i] for i in 1:size(data, 2)], headers)
     else

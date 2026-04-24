@@ -1,22 +1,22 @@
 """ 
   split_sample(data, start_date, estimation_horizon, evaluation_horizon)
 
-  extract the estimation and evaluation data (in-sample and out-of-sample) from the full data starting on "start_date".
-  Also calculate the mean vector and covariance matrix of training data for later usage.
+  extracts the in-sample (estimation) and out-of-sample (evaluation) datasets from the full dataset starting at start_date.
+  It also computes the mean vector and covariance matrix of the training (estimation) data for later use.
   
-  # Parameters :
+    # Parameters :
 
-   - `data` represents the historical returns
-   - `start_date` is the date on which estimation phase began
-   - `estimation_horizon` is the period of training the model (frequency: monthly)
-   - `evaluation_horizon` is the periode of testing (frequency: monthly)
+   - `data`: historical returns
+   - `start_date`: the date at which the estimation phase begins
+   - `estimation_horizon`: length of the training period (monthly frequency)
+   - `evaluation_horizon`: length of the testing period (monthly frequency)
 
-  # Results :
+    # Results :
 
-   - `Train_data` is the estimation set of the current period
-   - `Test_data` is the validation set of the currect period 
-   - `μ_train` represents the mean vector of training data
-   - `Σ_train` represents the covariance matrix of training data  
+   - `Train_data`: estimation (in-sample) dataset for the current period
+   - `Test_data`: validation (out-of-sample) dataset for the current period
+   - `μ_train` mean vector computed from the training data
+   - `Σ_train` covariance matrix computed from the training data 
 """
 
 function split_sample(Data, start_date, estimation_horizon, evaluation_horizon)

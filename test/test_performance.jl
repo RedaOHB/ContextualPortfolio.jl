@@ -32,7 +32,7 @@
     
     @testset "Sharpe Ratio" begin
 
-        returns = [0.01, 0.02, 0.015, 0.01, 0.02]
+        returns = [0.01, 0.02, -0.015, 0.01, 0.02]
         rf = 0.0
         
         Sharpe = Sharpe_ratio(returns, rf)
@@ -41,7 +41,7 @@
 
     @testset "Omega Ratio" begin
 
-        returns = [0.01, 0.02, 0.015, 0.01, 0.02]
+        returns = [0.01, 0.02, -0.015, 0.01, -0.02]
         τ = 0.0
         
         Ω = Omega_ratio(returns, τ)
@@ -72,8 +72,8 @@
     
     @testset "Turnover" begin
 
-        Portfolios = [0.5, 0.3, 0.2 ,    # Portfolio at t
-                     0.4, 0.4, 0.2]      # Portfolio at t1
+        Portfolios = [0.5 0.3 0.2 ;    # Portfolio at t
+                     0.4 0.4 0.2]      # Portfolio at t1
         
         turnover = Turnover(Portfolios)
         @test turnover[1] ≈ 0.1

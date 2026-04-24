@@ -9,7 +9,7 @@ include("test/data/data_loading.jl")
 # Load historical returns from Tiingo
   tickers = ["AAPL", "MSFT", "GOOGL"]
   start_date = Date(2020, 01, 01)
-  end_date = Date(2024, 01, 01)
+  end_date = Date(2024, 12, 31)
   API_key = "example_of_api_key"
   frequency = "daily"
 
@@ -48,7 +48,7 @@ See `.env.example` for template.
 
 **Option C: Pass Directly to Function**
 ```julia
-returns = historical_returns(tickers, start_date, end_date; 
+returns = historical_returns(tickers, start_date, end_date, 
                                   api_key="your_api_key_here", frequency)
 ```
 
@@ -64,7 +64,7 @@ Load historical returns from Tiingo API.
 - `start_date`: Start date (`Date` object)
 - `end_date`: End date (`Date` object)
 - `API_key` (optional): Tiingo API key
-- `frequency`: `"daily"` (`"monthly"`, `"weekly"`, `"annually"`)
+- `frequency`: `"daily"` (`"monthly"`, `"weekly"`or `"annually"`)
 
 **Results:** DataFrame with Date column and return columns for each ticker.
 
@@ -76,7 +76,7 @@ Load contextual features from Excel or CSV file.
 - `file_path`: Path to data file
 - `file_type`: `"xlsx"` or `"csv"`
 
-**Returns:** DataFrame with contextual features.
+**Results:** DataFrame with contextual features.
 
 ## Examples
 
@@ -89,10 +89,10 @@ using Dates
 
 # Load historical returns
 tickers = ["AAPL", "NKE", "GOOGL", "AMZN", "META"]
-returns = historical_returns(tickers, Date(2020,1,1), Date(2024,1,1),"your_api_key", "daily")
+returns = historical_returns(tickers, Date(2020,01,01), Date(2024,12,31),"your_api_key", "daily")
 
 # Load context features
-context = context_data("macro_indicators.xlsx", "xlsx")
+context = context_data("Features_example.csv", "csv")
 ```
 
 ## Data sources

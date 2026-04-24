@@ -45,9 +45,9 @@ model = optimize_mv # Mean Variance model
                returns = returns, 
                context = context, 
                model = model, 
-               \eta = 1.0, 
+               η = 1.0, 
                start_date = Date(2020,01,01), 
-               end_date = Date(2024,01,01) ) 
+               end_date = Date(2024,12,31) ) 
   # Call solve function 
   Portfolios, Performace_metrics, Global_performance = backtest_portfolio(Parameters) 
 
@@ -78,6 +78,7 @@ The package estimates conditional expected returns and covariance given context 
 ```julia
 model = optimize_mv(μᵣ_ₛ, Σᵣ_ₛ, η)
 ```
+This maximize the return and minimize the risk of portfolio.
 
 **Mean-Variance with Box Uncertainty**:
 ```julia
@@ -89,6 +90,9 @@ model = optimize_mvbu(μᵣ_ₛ, Σᵣ_ₛ, η, data)
 model = optimize_mveu(μᵣ_ₛ, Σᵣ_ₛ, η, data)
 ```
 
+These account for uncertainty in parameter estimates, making the portfolio more robust.
+
+
 ## Performance metrics
 
 The package computes comprehensive performance metrics:
@@ -96,7 +100,7 @@ The package computes comprehensive performance metrics:
 - **Return Metrics**: mean return and cumulative return
 - **Risk Metrics**: volatility and CVaR
 - **Risk-Adjusted**: Sharpe and Omega ratios
-- **Portfolio Characteristics**: Number of assets, HHI (diversification) and turnove
+- **Portfolio Characteristics**: Number of assets, HHI (diversification) and turnover
 
 ## Documentation
 
@@ -117,10 +121,7 @@ Assets = ["AAPL", "IBM", "GOOGL", "META", "AMZN"]
 returns = historical_returns(Assets, Date(2020,01,01), Date(2024,12,31), api_key, "daily")
 
 # Load contextual features from FRED data
-feature_1 = context_data("CPI.xlsx", "xlsx")
-features_2 = context_data("IPI.xlsx", "xlsx")
-  # Align contextual data
-  context = align(features_1, features_2)
+context = context_data("test/data/Features_example.csv", "csv")
 
 ```
 
@@ -171,7 +172,7 @@ println("  Sharpe Ratio: ", round(Global_performance.sharpe_ratio[1], digits=2))
 println(" Diversification index: ", round(Global_performance.HHI[1], digits=2))
 
 # Plot cumulative returns
-dates = Date(2015, 01, 01):Monthly(1):Date(2024, 12, 31) # Monthly features
+dates = Date(2019, 01, 01):Monthly(1):Date(2024, 12, 31) # Monthly features
 
 plot(Portfolio_performance.Return, dates, 
    xlabel="Dates",
@@ -189,7 +190,17 @@ plot(Portfolio_performance.Return, dates,
 
 ## Citation
 
+If you use ContextualOptimization.jl in your research, please cite:
 
+```bibtex
+@article{RedaOuahib2026,
+  title={ContextualOptimization.jl: A Julia Package for contextual optimization},
+  author={Reda Ouahib and Fabien Bastin},
+  journal={Journal of Open Source Software},
+  year={2026},
+  note={Submitted}
+}
+```
 
 ## References
 

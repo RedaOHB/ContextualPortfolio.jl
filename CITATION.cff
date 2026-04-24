@@ -1,0 +1,27 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Ouahib
+  given-names: Reda
+  orcid: "https://orcid.org/0009-0001-9940-9572"
+- family-names: Bastin
+  given-names: Fabian
+  orcid: "https://orcid.org/0000-0003-1323-6787"
+message: "If you use this software, please cite our article in the Journal of Open Source Software."
+repository-code: "https://github.com/RedaOHB/ContextualOptimization.jl"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "OHB"
+      given-names: "Reda"
+      orcid: "https://orcid.org/0009-0001-9940-9572"
+    - family-names: Bastin
+      given-names: Fabian
+      orcid: "https://orcid.org/0000-0003-1323-6787"
+  title: "ContextualOptimization.jl: A Julia Package for Contextual Portfolio Optimization"
+  journal: "Journal of Open Source Software"
+  year: 2026
+  # volume: 
+  # issue: 
+  # start: 
+  # end: 
+  # doi: 

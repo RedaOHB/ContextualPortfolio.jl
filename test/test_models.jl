@@ -16,7 +16,7 @@
         # Basic checks
         @test length(x) == n_assets
         @test all(x .>= -1e-6)     # Non-negativity (allow small numerical errors)
-        @test sum(x) ≈ 1.0 atol=1e-4  # Budget constraint
+        @test sum(x) ≈ 1.0         # Budget constraint
         
         # Check reasonable portfolio (not all in one asset)
         @test maximum(x) <= 1.0
@@ -43,12 +43,12 @@
         η = 1.0                   # Risk aversion
         
         # Run optimization
-        x = optimize_mvbu(μ, Σ, η, data)
+        x = optimize_mvbu(μ, Σ, η, data1)
         
         # Basic checks
         @test length(x) == n_assets
         @test all(x .>= -1e-6)     # Non-negativity (allow small numerical errors)
-        @test sum(x) ≈ 1.0 atol=1e-4  # Budget constraint
+        @test sum(x) ≈ 1.0         # Budget constraint
         
         # Check reasonable portfolio (not all in one asset)
         @test maximum(x) <= 1.0
@@ -75,12 +75,12 @@
         η = 1.0                   # Risk aversion
         
         # Run optimization
-        x = optimize_mveu(μ, Σ, η, data)
+        x = optimize_mveu(μ, Σ, η, data1)
         
         # Basic checks
         @test length(x) == n_assets
         @test all(x .>= -1e-6)     # Non-negativity (allow small numerical errors)
-        @test sum(x) ≈ 1.0 atol=1e-4  # Budget constraint
+        @test sum(x) ≈ 1.0         # Budget constraint
         
         # Check reasonable portfolio (not all in one asset)
         @test maximum(x) <= 1.0

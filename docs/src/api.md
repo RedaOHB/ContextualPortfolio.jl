@@ -44,16 +44,26 @@ Turnover
 
 ## Optimization Models
 ```@docs
-mean_variance_model
+Optimize_mv
+```
+```@docs
+Optimize_mvbu
+```
+```@docs
+Optimize_mveu
 ```
 
-## Utility Function 
+## Utility Functions 
 ```@docs
 split_sample
 ```
 ```@docs
+align
+```
+```@docs
 conditional_moments
 ```
+
 
 ## Index
 ```@index

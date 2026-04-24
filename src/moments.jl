@@ -1,14 +1,14 @@
 """
-  conditional_moments(data, Contextual_information, last_context, first_context)
+  conditional_moments(data::Matrix{Float64}, Contextual_information::DataFrame, last_context::Int, first_context::Int)
 
-  estimates the joint distribution of returns and contextual variables, and computes the conditional mean vector and conditional covariance matrix of returns given the provided context.
+  estimates the joint distribution of returns and contextual variables, and computes the conditional mean vector and the conditional covariance matrix of returns given the provided context.
 
   # Parameters:
 
-   - `data` contains the joints data (returns + context)
-   - `contextual_information` is the conditioning variables 
-   - `last_context` index of the last observed context of the current period
-   - `first_context` index of the first observed context of the current period 
+   - `data`: joint data (returns + context)
+   - `contextual_information`: the conditioning variables   
+   - `last_context`: index of the last observed context in the current period
+   - `first_context`: index of the first observed context in the current period 
 """
  
 function conditional_moments(data, contextual_information, last_context, first_context)
@@ -31,8 +31,8 @@ function conditional_moments(data, contextual_information, last_context, first_c
     # estimation of the joint distribution
       # the mean
         μ = mean(data, dims=1)  # joint mean
-        μᵣ = μ[1:n-d]  # mean return
-        μₛ = μ[n-d+1:end]  # mean of contextual variables
+        μᵣ = μ[1:n-d]  # mean returns
+        μₛ = μ[n-d+1:end]  # mean of the contextual variables
       # the covariance
         data_center = data .- μ
         Σ = (data_center' * data_center) / (size(data,1) - 1)  # joint covariance 
@@ -42,7 +42,7 @@ function conditional_moments(data, contextual_information, last_context, first_c
         Σₛₛ = Σ[n-d+1:end,n-d+1:end]  # covariance between contextual variables
 
     # conditional moments    
-      # condition on the last contextual variable observed 
+      # condition on the last observed contextual variable  
         μ_stand_context = mean(side_information[first_context:last_context,:], dims=1)
         σ_stand_context = std(side_information[first_context:last_context,:], dims=1) 
         s = (side_information[last_context,:] .- vec(μ_stand_context)) ./ vec(σ_stand_context)  # standarization

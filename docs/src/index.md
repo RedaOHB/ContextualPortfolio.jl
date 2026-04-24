@@ -1,5 +1,5 @@
 # [ContextualOptimization.jl documentation](@id Home)
-* A julia package for contextual optimization and backtesting * 
+* A julia package for contextual optimization and backtesting 
 
 ## Overview
 ```ContextualOptimization.jl``` is a julia package for portfolio optimization that incorporate external factors into the decision-making process. The package supports multiple optimization models including mean-variance, CVaR, and robust optimization. It provides comprehensive tools for performance evaluation and backtesting.
@@ -34,6 +34,12 @@ using Pkg
 add.Pkg(ContextualOptimization)
 ```
 
+Or for the development version: 
+```julia
+using Pkg
+Pkg.add(url="https://github.com/RedaOHB/ContextualOptimization.jl")
+```
+
 ## Basic usage
 Using ```ContextualOptimization.jl``` follows a simple three-step process:
 1. Prepare your asset returns and contextual data
@@ -59,4 +65,19 @@ Depth = 2
 ```
 
 ## Citation
+
+If you use ContextualOptimization.jl in your research, please cite:
+
+```bibtex
+@article{RedaOuahib2026,
+  title={ContextualOptimization.jl: A Julia Package for contextual optimization},
+  author={Reda Ouahib and Fabien Bastin},
+  journal={Journal of Open Source Software},
+  year={2026},
+  note={Submitted}
+}
+```
+
+
+
 

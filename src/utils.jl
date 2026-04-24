@@ -1,16 +1,17 @@
 """
-   align(returns::DataFrame, context::DataFrame)
+   align(data_1::DataFrame, data_2::DataFrame)
   
-  Ensures alignment of returns and contextual data  
+   ensures that the observations in data_1 and data_2 are properly aligned by matching their corresponding 
+   indices (e.g., dates) so that both datasets are synchronized for consistent analysis.
 
   # Parameters :
 
-   - `returns`: Historical returns
-   - `context`: Contextual features
+   - `data_1`: a DataFrame containing observations, where the first column represents the date (e.x., historical returns)
+   - `context`: a DataFrame containing observations, where the first column represents the date (e.x., contextul features)
 
   # Results :
 
-   - `Data`: A DataFrame containing a date column and contextual features aligned with the returns. 
+   - `Data`: a DataFrame containing a date column and observations from data_1 aligned with those in data_2
 
   # Exemple 
   ```julia
@@ -20,24 +21,24 @@
 
 """
 
-function align(returns::DataFrame, context::DataFrame)
+function align(data_1::DataFrame, data_2::DataFrame)
 
-    if size(returns, 1) == size(context, 1) 
-        Data = leftjoin(returns, context, on=[:Date])
+    if size(data_1, 1) == size(data_2, 1) 
+        Data = leftjoin(data_1, data_2, on=[:Date])
     else
-        n = size(returns, 2)
+        n = size(data_1, 2)
         # add columns for months and years to enable duplication
           col = names(context)[1]
-          context.month = Dates.month.(context[!,col])
-          context.year = Dates.year.(context[!,col])
-          returns.month = Dates.month.(returns.Date)
-          returns.year = Dates.year.(returns.Date)
-        # merge return and contextual data
-          Data = leftjoin(returns, context, on=[:year, :month], makeunique=true)
+          data_2.month = Dates.month.(data_2[!,col])
+          data_2.year = Dates.year.(data_2[!,col])
+          data_1.month = Dates.month.(data_1.Date)
+          data_1.year = Dates.year.(data_1.Date)
+        # merge observation from data_1 and those in data_2
+          Data = leftjoin(data_1, data_2, on=[:year, :month], makeunique=true)
         # remove the auxiliary columns added for each dataset
           select!(Data, Not([:month, :year, propertynames(Data)[n+3]]))
-          select!(context, Not([:month, :year]))
-          select!(returns, Not([:month, :year]))
+          select!(data_2, Not([:month, :year]))
+          select!(data_1, Not([:month, :year]))
     end
 
     return Data

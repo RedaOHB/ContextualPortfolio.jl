@@ -21,17 +21,19 @@
         end
 
         # Aligning returns and contextual features by date
-        data = align(returns, context)
+        data = align(returns, context) 
 
+        data = Float64.(Matrix(data[:,2:end]))  # The first argument must be Matrix{Float64}
+ 
         # Test parameters
         first_context = 1
         last_context = 48  # Last context observed in of estimation period
 
         # Test moment calculation
-        μᵣ_ₛ, Σᵣ_ₛ = conditional_moments(returns, context, last_context, first_context)
+        μᵣ_ₛ, Σᵣ_ₛ = conditional_moments(data, context, last_context, first_context)
         
         # Check dimensions
-        @test size(μᵣ_ₛ) == (n_assets)
+        @test size(μᵣ_ₛ) == (n_assets,)
         @test size(Σᵣ_ₛ) == (n_assets, n_assets)
         
         # Check symmetry of covariance

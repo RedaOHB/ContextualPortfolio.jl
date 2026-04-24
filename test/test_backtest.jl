@@ -18,15 +18,10 @@
     # Create DataFrame with Date column and contextual features (monthly)
     dates = Date(2020, 01, 01):Month(1):Date(2024, 12, 31)
     n_periods = length(dates)
-    # Create the first feature
-    context_1 = DataFrame(Date = dates) 
-    context_1[!, Symbol("Feature_1")] = randn(n_periods)
-    # Create the second feature
-    context_2 = DataFrame(Date = dates)
-    context_2[!, Symbol("Feature_2")] = randn(n_periods)
-
-    # Align contextual features by date
-    context = align(context_1, context_2)
+    context = DataFrame(Date = dates) 
+    for i in 1:n_context
+        context[!, Symbol("Features$i")] = randn(n_periods)
+    end
 
     # Choose optimization model
     model = optimize_mv  # Mean Variance model
@@ -40,7 +35,7 @@
                 model = model,            # optimize_mv, optimize_mvbu or optimize_mveu
                 η = 1.0,                  # risk aversion
                 start_date = Date(2020,01,01), 
-                end_date = Date(2024,01,01) ) 
+                end_date = Date(2024,12,31) ) 
 
     # Run backtest   
     Portfolios, Portfolio_performance, Global_performance = backtest_portfolio(Parameters)
@@ -50,9 +45,7 @@
     @test !isnothing(Portfolio_performance)
     @test !isnothing(Global_performance)
     @test length(Portfolios) > 0
-    @test length(Portfolio_performance) > 0
-    @test length(Global_performance) > 0
-        
+
     # Check weight constraints
     for w in eachrow(Portfolios)
         @test all(w .>= -1e-6)  # Non-negative (allow small numerical errors)
