@@ -196,7 +196,7 @@ If you use ContextualOptimization.jl in your research, please cite:
 ```bibtex
 @article{RedaOuahib2026,
   title={ContextualOptimization.jl: A Julia Package for contextual optimization},
-  author={Reda Ouahib and Fabien Bastin},
+  author={Reda Ouahib and Fabian Bastin},
   journal={Journal of Open Source Software},
   year={2026},
   note={Submitted}
@@ -207,8 +207,8 @@ If you use ContextualOptimization.jl in your research, please cite:
 
 The methodology is based on:
 
-- Nguyen et al. (2024). "Contextual Optimization Framework for Portfolio Selection."
-- Markowitz, H. (1952). "Portfolio Selection." *The Journal of Finance*.
+- Viet Anh Nguyen, Fan Zhang, Shanshan Wang, Jose Blanchet, Erick Delage, and Yinyu Ye (2024). "Robustifying conditional portfolio decisions via optimal transport." *Operations Research* 73(5), pp. 2801–2829.
+- Harry Markowitz (1952). "Portfolio Selection." *The Journal of Finance* 7(1), pp. 77-91.
 
 ## Acknowledgments
 
