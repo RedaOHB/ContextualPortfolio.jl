@@ -15,7 +15,8 @@
 
 ## Installation 
 ```julia 
-using Pkg Pkg.add("ContextualOptimization")
+using Pkg
+Pkg.add("ContextualOptimization")
 ```
 
 Or install the development version:
