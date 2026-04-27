@@ -11,7 +11,7 @@ repository-code: "https://github.com/RedaOHB/ContextualOptimization.jl"
 preferred-citation:
   type: article
   authors:
-    - family-names: "OHB"
+    - family-names: "Ouahib"
       given-names: "Reda"
       orcid: "https://orcid.org/0009-0001-9940-9572"
     - family-names: Bastin

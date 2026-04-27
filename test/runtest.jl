@@ -1,15 +1,11 @@
-using ContextualOptimization 
-using DataFrames, CSV, XLSX, Dates  
-using JuMP, Gurobi  
-using Distributions, LinearAlgebra, Statistics, StatsBase, Random, CovarianceEstimation  
-using DotEnv, JSON3, HTTP, YFinance, MarketData 
-
-
-
+using Test
+using ContextualOptimization
+using DataFrames, Dates
+using JuMP, HiGHS
+using Distributions, LinearAlgebra, Statistics, StatsBase, Random, CovarianceEstimation
 
 # Set random seed for reproducibility
 Random.seed!(42)
-
 
 @testset "ContextualOptimization.jl" begin
     include("test_models.jl")

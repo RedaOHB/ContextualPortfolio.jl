@@ -1,13 +1,10 @@
 module ContextualOptimization
 
-# Import extenal package dependencies
-using JuMP, Gurobi
-using DataFrames, Dates, DelimitedFiles, ExcelFiles, XLSX
-using Distributions, CovarianceEstimation, LinearAlgebra, Random, Statistics, StatsBase
-using Plots
-using MarketData, YFinance, JSON3, HTTP, DotEnv 
+using JuMP, HiGHS
+using DataFrames, Dates
+using Distributions, CovarianceEstimation, LinearAlgebra, Statistics, StatsBase
 
-# Include source files 
+# Include source files
 include("splitting.jl")
 include("utils.jl")
 include("moments.jl")
@@ -15,20 +12,24 @@ include("performance.jl")
 include("models.jl")
 include("backtest.jl")
 
-# Export the main user-facing functions
-export backtest_portfolio  # backtesting function
-export Conditional_Value_at_Risk, Sharpe_ratio, Omega_ratio, Turnover  # performance metrics
-export optimize_mv, optimize_mvbu, optimize_mveu  # optimization models
-export conditional_moments  # conditional moments
+# Export types
+export backtestParameters
+
+# Export optimization models
+export optimize_mv, optimize_mvbu, optimize_mveu
+
+# Export backtesting
+export backtest_portfolio
+
+# Export conditional moments
+export conditional_moments
+
+# Export performance metrics
+export cumulative_return, volatility
+export Conditional_Value_at_Risk, Sharpe_ratio, Omega_ratio
+export Assets_number, Diversification, Turnover
+
+# Export utilities
+export split_sample, align
 
 end # module ContextualOptimization
-
-
-
-
-
-
-
-
-
-

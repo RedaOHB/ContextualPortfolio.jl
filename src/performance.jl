@@ -5,7 +5,7 @@
   
    - `𝐑`: vector of portfolio returns evaluated over a set of data, 𝐑 = R₁,R₂,...,Rₙ
 
-  # mathematic formula:  μ = ∏(1 - 𝐑) - 1
+  # mathematic formula:  μ = ∏(1 + 𝐑) - 1
 
 """
 function cumulative_return(𝐑) 

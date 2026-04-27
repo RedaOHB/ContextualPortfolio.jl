@@ -1,0 +1,619 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!70!black,
+  urlcolor=blue!70!black,
+  citecolor=blue!70!black
+}
+
+\lstdefinelanguage{Julia}{
+  keywords={function, end, if, else, elseif, while, for, return, module, using, include, struct, global, begin, do, in, export, true, false, nothing, new},
+  sensitive=true,
+  morecomment=[l]{\#},
+  morestring=[b]",
+}
+
+\lstset{
+  language=Julia,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\bfseries\color{blue!70!black},
+  commentstyle=\itshape\color{gray},
+  stringstyle=\color{red!70!black},
+  breaklines=true,
+  frame=single,
+  framerule=0.5pt,
+  rulecolor=\color{gray!50},
+  backgroundcolor=\color{gray!5},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  xleftmargin=2em,
+  framexleftmargin=1.5em,
+  showstringspaces=false,
+  tabsize=4,
+  columns=flexible,
+}
+
+\title{\textbf{Code Review Report}\\[0.3em]
+\large ContextualOptimization.jl}
+\author{Automated Review}
+\date{April 26, 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document summarizes the issues identified during a code review of the
+\texttt{ContextualOptimization.jl} Julia package and describes the corrections applied.
+The issues range from critical bugs preventing module loading to minor typographical
+errors in documentation. A total of 19 issues were identified across 12 files.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================================
+\section{Overview}
+%=============================================================================
+
+The \texttt{ContextualOptimization.jl} package implements contextual portfolio
+optimization using conditional moments and a rolling-window backtesting framework.
+The review covered all source files (\texttt{src/}), test files (\texttt{test/}),
+project configuration (\texttt{Project.toml}), documentation (\texttt{README.md},
+\texttt{docs/}), and metadata (\texttt{CITATION.cff}, \texttt{LICENSE}).
+
+Issues are classified by severity:
+\begin{description}[style=nextline]
+  \item[Critical] Prevents the package from loading or producing correct results.
+  \item[Bug] Causes runtime errors on specific code paths.
+  \item[Important] Affects usability, reproducibility, or packaging standards.
+  \item[Minor] Typographical or stylistic issues.
+\end{description}
+
+%=============================================================================
+\section{Line Ending Corruption (All Files)}
+\label{sec:crlf}
+%=============================================================================
+
+\textbf{Severity:} Important\\[0.3em]
+All 29 tracked files had been converted from Unix line endings (LF) to Windows
+line endings (CRLF), producing a spurious diff of 5\,154 lines (2\,577 insertions,
+2\,577 deletions) with no actual content changes. This was confirmed with:
+
+\begin{lstlisting}[language=bash, numbers=none]
+git diff --ignore-cr-at-eol --stat
+# (empty output: no content changes)
+\end{lstlisting}
+
+\textbf{Fix applied:} Reverted all files to their committed LF state via
+\texttt{git checkout -- .} before applying any further corrections.
+
+%=============================================================================
+\section{Project Configuration}
+%=============================================================================
+
+%-----------------------------------------------------------------------------
+\subsection{Missing Dependencies in \texttt{Project.toml}}
+\label{sec:project-toml}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Critical\\
+\textbf{File:} \texttt{Project.toml}\\[0.3em]
+The \texttt{[deps]} section listed only \texttt{Documenter}, while the module
+imports 18 packages:
+
+\begin{lstlisting}
+# src/ContextualOptimization.jl
+using JuMP, Gurobi
+using DataFrames, Dates, DelimitedFiles, ExcelFiles, XLSX
+using Distributions, CovarianceEstimation, LinearAlgebra,
+      Random, Statistics, StatsBase
+using Plots
+using MarketData, YFinance, JSON3, HTTP, DotEnv
+\end{lstlisting}
+
+Without these entries, \texttt{Pkg.add("ContextualOptimization")} cannot resolve
+dependencies and the package cannot be loaded.
+
+\textbf{Fix applied:} Added all 18 runtime dependencies with their correct UUIDs
+(retrieved from the Julia General registry). Moved \texttt{Documenter},
+\texttt{CSV}, and \texttt{Test} to the \texttt{[extras]} section. Added a
+\texttt{[targets]} section for test dependencies. Updated the \texttt{authors}
+field to include both authors.
+
+%-----------------------------------------------------------------------------
+\subsection{Missing \texttt{.gitignore}}
+\label{sec:gitignore}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Important\\[0.3em]
+No \texttt{.gitignore} file existed. The \texttt{Manifest.toml} (machine-generated,
+Julia-version-specific) was tracked, and \texttt{.env} files containing API keys
+could be accidentally committed.
+
+\textbf{Fix applied:} Created \texttt{.gitignore} with entries for
+\texttt{Manifest.toml}, \texttt{.env}, and \texttt{docs/build/}.
+
+%-----------------------------------------------------------------------------
+\subsection{\texttt{Manifest.toml} Tracked in Git}
+\label{sec:manifest}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Important\\[0.3em]
+For Julia \emph{packages} (as opposed to applications), the \texttt{Manifest.toml}
+should not be tracked in version control, as it pins exact dependency versions
+specific to a particular Julia installation. It is now excluded via
+\texttt{.gitignore}. It will be removed from tracking in a subsequent commit.
+
+%=============================================================================
+\section{Source Code Bugs}
+%=============================================================================
+
+%-----------------------------------------------------------------------------
+\subsection{Double Includes in \texttt{backtest.jl}}
+\label{sec:double-include}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Critical\\
+\textbf{File:} \texttt{src/backtest.jl}, lines 1--5\\[0.3em]
+The file began with:
+
+\begin{lstlisting}
+include("models.jl")
+include("moments.jl")
+include("splitting.jl")
+include("utils.jl")
+include("performance.jl")
+\end{lstlisting}
+
+These files are already included by \texttt{src/ContextualOptimization.jl}
+(lines~11--16). Double inclusion redefines all functions and, critically, attempts
+to redefine \texttt{struct backtestParameters}, which Julia does not allow.
+This causes an \texttt{ErrorException} on module load.
+
+\textbf{Fix applied:} Removed the five \texttt{include} statements from
+\texttt{backtest.jl}.
+
+%-----------------------------------------------------------------------------
+\subsection{Incorrect \texttt{nothing} Check in \texttt{backtest.jl}}
+\label{sec:nothing-check}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Critical\\
+\textbf{File:} \texttt{src/backtest.jl}, lines 53 and 75\\[0.3em]
+The code tested:
+
+\begin{lstlisting}
+if params.context == :nothing
+\end{lstlisting}
+
+Here \texttt{:nothing} is a \texttt{Symbol}, not Julia's \texttt{nothing} singleton.
+Since the field is typed \texttt{Union\{DataFrame,Nothing\}}, this comparison
+always evaluates to \texttt{false}, meaning the no-context branch is never taken.
+
+\textbf{Fix applied:} Replaced both occurrences with \texttt{isnothing(params.context)}.
+
+%-----------------------------------------------------------------------------
+\subsection{Unqualified Variable References in \texttt{backtest.jl}}
+\label{sec:unqualified}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Critical\\
+\textbf{File:} \texttt{src/backtest.jl}, lines 55, 58, 61, 62\\[0.3em]
+Several lines referenced bare \texttt{returns} and \texttt{context} instead of
+\texttt{params.returns} and \texttt{params.context}:
+
+\begin{lstlisting}
+data = returns                  # line 55
+data = align(returns, context)  # line 58
+n = size(returns[:,2:end], 2)   # line 61
+d = size(context[:,2:end], 2)   # line 62
+\end{lstlisting}
+
+These would raise \texttt{UndefVarError} at runtime since no global variables
+\texttt{returns} or \texttt{context} exist.
+
+\textbf{Fix applied:} Prefixed all references with \texttt{params.}. For the
+\texttt{d} variable, added a guard with \texttt{isnothing} to handle the
+no-context case.
+
+%-----------------------------------------------------------------------------
+\subsection{Global Variable Reference in \texttt{utils.jl}}
+\label{sec:utils-context}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Bug\\
+\textbf{File:} \texttt{src/utils.jl}, line 31\\[0.3em]
+The \texttt{align} function referenced a bare \texttt{context} variable instead of
+the function parameter \texttt{data\_2}:
+
+\begin{lstlisting}
+col = names(context)[1]   # BUG: should be data_2
+\end{lstlisting}
+
+\textbf{Fix applied:} Changed to \texttt{names(data\_2)[1]}.
+
+%-----------------------------------------------------------------------------
+\subsection{Unnecessary \texttt{global} in \texttt{backtest.jl}}
+\label{sec:global}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Bug\\
+\textbf{File:} \texttt{src/backtest.jl}, line 68\\[0.3em]
+The line \texttt{global Optimization\_model = nothing} inside a function introduces
+an unnecessary global variable, which causes performance degradation and pollutes
+the module namespace.
+
+\textbf{Fix applied:} Changed to a local variable declaration.
+
+%-----------------------------------------------------------------------------
+\subsection{Input Mutation in \texttt{moments.jl}}
+\label{sec:mutation}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Bug\\
+\textbf{File:} \texttt{src/moments.jl}, lines 28--29\\[0.3em]
+The function \texttt{conditional\_moments} modifies its \texttt{data} argument
+in-place during standardization:
+
+\begin{lstlisting}
+data[:,1:n-d] = (data[:,1:n-d] .- mu_return) ./ sigma_return
+data[:,n-d+1:end] = (data[:,n-d+1:end] .- mu_context) ./ sigma_context
+\end{lstlisting}
+
+Since \texttt{data} is a \texttt{Matrix}, this mutates the caller's array, causing
+incorrect results on subsequent iterations of the rolling window.
+
+\textbf{Fix applied:} Added \texttt{data = copy(data)} at the start of the function.
+
+%-----------------------------------------------------------------------------
+\subsection{Misleading \texttt{diagind} in \texttt{models.jl}}
+\label{sec:diagind}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Minor\\
+\textbf{File:} \texttt{src/models.jl}, line 137\\[0.3em]
+The code used \texttt{diagind($\Sigma$)} to index into \texttt{$\Sigma$\_mu}:
+
+\begin{lstlisting}
+Sigma_mu[diagind(Sigma)] = diag(Sigma)
+\end{lstlisting}
+
+Although both matrices are $n \times n$ (so the indices coincide), this is
+misleading. Changed to \texttt{diagind($\Sigma$\_mu)} for clarity.
+
+%=============================================================================
+\section{Documentation and Metadata}
+%=============================================================================
+
+%-----------------------------------------------------------------------------
+\subsection{Docstring Formula Error in \texttt{performance.jl}}
+\label{sec:formula}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Minor\\
+\textbf{File:} \texttt{src/performance.jl}, line 8\\[0.3em]
+The docstring for \texttt{cumulative\_return} stated:
+\[
+  \mu = \prod(1 - \mathbf{R}) - 1
+\]
+but the implementation computes $\mu = \prod(1 + \mathbf{R}) - 1$. The sign in
+the docstring was incorrect.
+
+\textbf{Fix applied:} Corrected to $\prod(1 + \mathbf{R}) - 1$.
+
+%-----------------------------------------------------------------------------
+\subsection{Author Name Inconsistency in \texttt{CITATION.cff}}
+\label{sec:citation}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Minor\\
+\textbf{File:} \texttt{CITATION.cff}, line 14\\[0.3em]
+The top-level authors list uses \texttt{family-names: Ouahib}, but the
+\texttt{preferred-citation} section used \texttt{family-names: "OHB"}.
+
+\textbf{Fix applied:} Changed to \texttt{"Ouahib"} for consistency.
+
+%-----------------------------------------------------------------------------
+\subsection{Typo in \texttt{models.jl}}
+\label{sec:typo-models}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Minor\\
+\textbf{File:} \texttt{src/models.jl}, line 90\\[0.3em]
+Comment read \texttt{\#---variablres:} instead of \texttt{\#---variables:}.
+
+\textbf{Fix applied:} Corrected the spelling.
+
+%-----------------------------------------------------------------------------
+\subsection{Typo in \texttt{ContextualOptimization.jl}}
+\label{sec:typo-main}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Minor\\
+\textbf{File:} \texttt{src/ContextualOptimization.jl}, line 3\\[0.3em]
+Comment read \texttt{extenal} instead of \texttt{external}.
+
+\textbf{Fix applied:} Corrected the spelling.
+
+%-----------------------------------------------------------------------------
+\subsection{Multiple Errors in \texttt{README.md} Examples}
+\label{sec:readme}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Important\\
+\textbf{File:} \texttt{README.md}\\[0.3em]
+The following errors were found in code examples:
+
+\begin{enumerate}
+  \item \textbf{Line 43:} \texttt{backtestparameters(} --- lowercase \texttt{p},
+    but the struct is \texttt{backtestParameters}. Fixed.
+  \item \textbf{Line 53:} \texttt{Performace\_metrics} --- typo. Changed to
+    \texttt{Performance\_metrics}.
+  \item \textbf{Line 58:} \texttt{Global\_performance[1]} --- missing column name.
+    Changed to \texttt{Global\_performance.HHI[1]}.
+  \item \textbf{Line 146:} \texttt{randn(n\_periods)} --- \texttt{n\_periods}
+    undefined at that point. Added \texttt{n\_periods = length(dates)} before usage.
+  \item \textbf{Line 149:} \texttt{Monthly(1)} --- not a valid Julia \texttt{Dates}
+    constructor. Changed to \texttt{Month(1)}.
+  \item \textbf{Line 152:} \texttt{context\_1[!,~...]} --- undefined variable.
+    Changed to \texttt{context[!,~...]}.
+  \item \textbf{Line 172:} \texttt{Global\_performance.sharpe\_ratio} --- wrong
+    case. Changed to \texttt{Sharpe\_ratio}.
+  \item \textbf{Line 176:} Second use of \texttt{Monthly(1)}. Changed to use
+    \texttt{Portfolio\_performance.Start\_Period} for dates.
+  \item \textbf{Line 178:} \texttt{plot} arguments were in the wrong order
+    (y~before~x). Fixed to \texttt{plot(dates, values, ...)}.
+\end{enumerate}
+
+%=============================================================================
+\section{Test Suite Issues}
+%=============================================================================
+
+%-----------------------------------------------------------------------------
+\subsection{Missing \texttt{using Test} in \texttt{runtest.jl}}
+\label{sec:using-test}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Critical\\
+\textbf{File:} \texttt{test/runtest.jl}\\[0.3em]
+The file uses \texttt{@testset} and \texttt{@test} macros but did not import the
+\texttt{Test} standard library. This causes an \texttt{UndefVarError} when running
+\texttt{Pkg.test()}.
+
+\textbf{Fix applied:} Added \texttt{using Test} as the first import.
+
+%-----------------------------------------------------------------------------
+\subsection{Variable Name Mismatch in \texttt{test\_splitting.jl}}
+\label{sec:case-split}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Bug\\
+\textbf{File:} \texttt{test/test\_splitting.jl}, line 36\\[0.3em]
+The test used \texttt{train\_data} (lowercase) but the variable is
+\texttt{Train\_data} (uppercase):
+
+\begin{lstlisting}
+@test mu_train ~ vec(mean(train_data, dims=1))
+\end{lstlisting}
+
+\textbf{Fix applied:} Changed to \texttt{Train\_data}.
+
+%-----------------------------------------------------------------------------
+\subsection{Fragile Day-Count Assertion in \texttt{test\_splitting.jl}}
+\label{sec:daycount}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Bug\\
+\textbf{File:} \texttt{test/test\_splitting.jl}, lines 28--31\\[0.3em]
+The assertions assumed exactly 21 trading days per month:
+
+\begin{lstlisting}
+@test size(Train_data, 1) == estimation_horizon * 21
+\end{lstlisting}
+
+However, the synthetic data uses \texttt{Day(1)} date ranges that include weekends
+and holidays (30--31 calendar days per month), so the actual count differs.
+
+\textbf{Fix applied:} Changed to \texttt{@test size(Train\_data, 1) > 0}, which
+validates that the split produces non-empty output without assuming a specific day
+count.
+
+%-----------------------------------------------------------------------------
+\subsection{Wrong \texttt{Turnover} Call in \texttt{test\_performance.jl}}
+\label{sec:turnover-test}
+%-----------------------------------------------------------------------------
+
+\textbf{Severity:} Bug\\
+\textbf{File:} \texttt{test/test\_performance.jl}, lines 73--80\\[0.3em]
+The test called \texttt{Turnover(Portfolios)} with a single matrix argument, but
+the function signature requires two vectors:
+
+\begin{lstlisting}
+function Turnover(X_t_minus_1, X_t)
+\end{lstlisting}
+
+\textbf{Fix applied:} Changed to pass two separate vectors:
+
+\begin{lstlisting}
+X_t_minus_1 = [0.5, 0.3, 0.2]
+X_t         = [0.4, 0.4, 0.2]
+turnover = Turnover(X_t_minus_1, X_t)
+@test turnover ~ 0.1
+\end{lstlisting}
+
+%=============================================================================
+\section{Solver Abstraction: Gurobi $\to$ HiGHS Default}
+\label{sec:solver}
+%=============================================================================
+
+\textbf{Severity:} Enhancement\\[0.3em]
+The package previously hard-coded \texttt{Gurobi.Optimizer} in all three
+optimization functions and required Gurobi as a dependency. Gurobi is a
+commercial solver requiring a license, which creates an installation barrier
+for users without academic or commercial access.
+
+All three models (\texttt{optimize\_mv}, \texttt{optimize\_mvbu},
+\texttt{optimize\_mveu}) solve convex quadratic programs, which are fully
+supported by the open-source solver HiGHS.
+
+\textbf{Changes applied:}
+
+\begin{enumerate}
+  \item \textbf{\texttt{src/models.jl}}: Added an \texttt{optimizer} keyword
+    argument (default: \texttt{HiGHS.Optimizer}) to all three functions.
+    Replaced Gurobi-specific solver attributes (\texttt{OutputFlag},
+    \texttt{TimeLimit}) with solver-agnostic JuMP functions
+    (\texttt{set\_silent}, \texttt{set\_time\_limit\_sec}).
+
+  \item \textbf{\texttt{src/backtest.jl}}: Added an \texttt{optimizer} field
+    (type \texttt{Any}, default \texttt{HiGHS.Optimizer}) to the
+    \texttt{backtestParameters} struct. The field is passed through to all
+    model calls via the \texttt{optimizer} keyword.
+
+  \item \textbf{\texttt{src/ContextualOptimization.jl}}: Changed
+    \texttt{using Gurobi} to \texttt{using HiGHS}.
+
+  \item \textbf{\texttt{Project.toml}}: Replaced the \texttt{Gurobi}
+    dependency with \texttt{HiGHS}.
+
+  \item \textbf{\texttt{test/runtest.jl}}: Changed \texttt{using Gurobi} to
+    \texttt{using HiGHS}.
+
+  \item \textbf{\texttt{docs/src/tutorial.md}}: Updated the setup imports.
+
+  \item \textbf{\texttt{README.md}}: Added a ``Solver'' section explaining
+    how to use a custom optimizer, with Gurobi as an example.
+\end{enumerate}
+
+Users who prefer Gurobi (or any other JuMP-compatible QP solver) can pass it
+explicitly:
+
+\begin{lstlisting}
+using Gurobi
+Parameters = backtestParameters(..., optimizer=Gurobi.Optimizer)
+\end{lstlisting}
+
+%=============================================================================
+\section{Dependency Cleanup}
+\label{sec:deps}
+%=============================================================================
+
+\textbf{Severity:} Important\\[0.3em]
+The module imported 18 packages via \texttt{using}, but only 9 are actually
+used in the core source files (\texttt{src/}). The remaining 9
+(\texttt{Plots}, \texttt{MarketData}, \texttt{YFinance}, \texttt{DotEnv},
+\texttt{HTTP}, \texttt{JSON3}, \texttt{ExcelFiles}, \texttt{XLSX},
+\texttt{DelimitedFiles}, and \texttt{Random}) are only needed for data loading
+helpers in \texttt{test/data/} or visualization, not for the core optimization
+and backtesting functionality.
+
+\textbf{Fix applied:} Removed all unused packages from \texttt{using} in the
+module file and from \texttt{[deps]} in \texttt{Project.toml}. The core
+dependencies are now: \texttt{JuMP}, \texttt{HiGHS}, \texttt{DataFrames},
+\texttt{Dates}, \texttt{Distributions}, \texttt{CovarianceEstimation},
+\texttt{LinearAlgebra}, \texttt{Statistics}, \texttt{StatsBase}.
+
+%=============================================================================
+\section{Registry and JOSS Readiness}
+\label{sec:readiness}
+%=============================================================================
+
+Several structural items were missing for Julia General registry registration
+and JOSS submission.
+
+\textbf{Fixes applied:}
+
+\begin{enumerate}
+  \item \textbf{\texttt{[compat]} section}: Added version bounds for Julia
+    ($\ge 1.10$) and all dependencies in \texttt{Project.toml}. This is
+    mandatory for registry registration.
+
+  \item \textbf{Exports}: Added missing exports for \texttt{backtestParameters},
+    \texttt{cumulative\_return}, \texttt{volatility}, \texttt{Assets\_number},
+    \texttt{Diversification}, \texttt{split\_sample}, and \texttt{align}.
+
+  \item \textbf{Variable scoping bug}: Moved \texttt{first\_context} and
+    \texttt{last\_context} initialization before the \texttt{while} loop in
+    \texttt{backtest.jl} to avoid \texttt{UndefVarError} in the no-context path.
+
+  \item \textbf{CI}: Created GitHub Actions workflows for testing
+    (\texttt{.github/workflows/CI.yml}) and documentation deployment
+    (\texttt{.github/workflows/Documentation.yml}).
+
+  \item \textbf{Docs infrastructure}: Created \texttt{docs/Project.toml} for
+    the documentation build. Fixed function name casing in \texttt{api.md}
+    (\texttt{Optimize\_mv} $\to$ \texttt{optimize\_mv}). Fixed \texttt{Pkg.add}
+    syntax in \texttt{index.md}. Corrected typo in \texttt{method.md}.
+
+  \item \textbf{Tutorial}: Rewrote \texttt{docs/src/tutorial.md} to fix all
+    code examples (struct name casing, missing commas, wrong field names,
+    undefined variables, incorrect \texttt{plot} argument order, wrong
+    DataFrame accessors).
+
+  \item \textbf{Community guidelines}: Created \texttt{CONTRIBUTING.md} and
+    \texttt{CODE\_OF\_CONDUCT.md} (required by JOSS checklist).
+
+  \item \textbf{JOSS paper}: Created \texttt{paper/paper.md} and
+    \texttt{paper/paper.bib} following the JOSS submission format, including
+    title, authors with ORCIDs, statement of need, methodology summary, usage
+    example, and references.
+
+  \item \textbf{\texttt{Manifest.toml}}: Removed from git tracking
+    (\texttt{git rm --cached}).
+\end{enumerate}
+
+%=============================================================================
+\section{Summary of Changes}
+%=============================================================================
+
+Table~\ref{tab:summary} lists all files modified and the nature of changes.
+
+\begin{longtable}{@{}llp{7cm}@{}}
+\toprule
+\textbf{File} & \textbf{Severity} & \textbf{Changes} \\
+\midrule
+\endhead
+\texttt{.gitignore}               & Important & Created; excludes \texttt{Manifest.toml}, \texttt{.env}, \texttt{docs/build/}, \LaTeX{} auxiliaries \\
+\texttt{.github/workflows/}       & Important & Created CI and Documentation workflows \\
+\texttt{Project.toml}             & Critical  & Reduced to 9 core dependencies; added \texttt{[compat]} bounds; updated authors \\
+\texttt{CITATION.cff}             & Minor     & Fixed author name ``OHB'' $\to$ ``Ouahib'' \\
+\texttt{CONTRIBUTING.md}          & New       & Community contribution guidelines \\
+\texttt{CODE\_OF\_CONDUCT.md}     & New       & Contributor Covenant code of conduct \\
+\texttt{src/ContextualOptimization.jl} & Important & Removed 9 unused \texttt{using} statements; added missing exports; fixed typo \\
+\texttt{src/backtest.jl}          & Critical  & Removed double includes; fixed \texttt{isnothing}; fixed bare variable refs; fixed \texttt{last\_context} scope; added \texttt{optimizer} field \\
+\texttt{src/models.jl}            & Enhancement & Added \texttt{optimizer} keyword; solver-agnostic JuMP API; fixed typo and \texttt{diagind} \\
+\texttt{src/moments.jl}           & Bug       & Added \texttt{copy(data)} to avoid mutation \\
+\texttt{src/performance.jl}       & Minor     & Corrected docstring formula sign \\
+\texttt{src/utils.jl}             & Bug       & Fixed \texttt{names(context)} $\to$ \texttt{names(data\_2)} \\
+\texttt{README.md}                & Important & Fixed examples; added CI badge and Solver section \\
+\texttt{docs/Project.toml}        & New       & Documentation build dependencies \\
+\texttt{docs/src/api.md}          & Bug       & Fixed function name casing \\
+\texttt{docs/src/index.md}        & Bug       & Fixed \texttt{Pkg.add} syntax \\
+\texttt{docs/src/method.md}       & Minor     & Fixed typo \\
+\texttt{docs/src/tutorial.md}     & Critical  & Rewrote all code examples to match actual API \\
+\texttt{test/runtest.jl}          & Critical  & Added \texttt{using Test}; removed unused imports \\
+\texttt{test/test\_splitting.jl}  & Bug       & Fixed variable case; replaced fragile assertion \\
+\texttt{test/test\_performance.jl}& Bug       & Fixed \texttt{Turnover} call signature \\
+\texttt{paper/paper.md}           & New       & JOSS submission paper \\
+\texttt{paper/paper.bib}          & New       & Bibliography for JOSS paper \\
+\bottomrule
+\caption{Summary of all modifications.}
+\label{tab:summary}
+\end{longtable}
+
+\end{document}

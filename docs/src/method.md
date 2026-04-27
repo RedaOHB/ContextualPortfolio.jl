@@ -18,7 +18,7 @@ During the estimation phase, the algorithm uses a rolling training window of his
 where:
 * $\mu_{r}$ and $\mu_{s}$ are the mean vectors of returns and contextual features, respectively.
 * $\Sigma_{rr}$ and $\Sigma_{ss}$ are the covariance matrices of returns and contextual features, respectively. 
-* $\Sigma_{rs} = \Sigma_{sr}^{T}$ representens the cross-covariance between returns and contextual features.
+* $\Sigma_{rs} = \Sigma_{sr}^{T}$ represents the cross-covariance between returns and contextual features.
 
 The next step is solving optimization problem to determine optimal portfolio weights. The optimization model can be chosen from several models defined in [`models.jl`](https://github.com/RedaOHB/ContextualOptimization.jl/src/models.jl).
 

@@ -44,13 +44,13 @@ Turnover
 
 ## Optimization Models
 ```@docs
-Optimize_mv
+optimize_mv
 ```
 ```@docs
-Optimize_mvbu
+optimize_mvbu
 ```
 ```@docs
-Optimize_mveu
+optimize_mveu
 ```
 
 ## Utility Functions 

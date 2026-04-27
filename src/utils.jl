@@ -28,7 +28,7 @@ function align(data_1::DataFrame, data_2::DataFrame)
     else
         n = size(data_1, 2)
         # add columns for months and years to enable duplication
-          col = names(context)[1]
+          col = names(data_2)[1]
           data_2.month = Dates.month.(data_2[!,col])
           data_2.year = Dates.year.(data_2[!,col])
           data_1.month = Dates.month.(data_1.Date)

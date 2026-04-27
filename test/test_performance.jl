@@ -72,10 +72,10 @@
     
     @testset "Turnover" begin
 
-        Portfolios = [0.5 0.3 0.2 ;    # Portfolio at t
-                     0.4 0.4 0.2]      # Portfolio at t1
-        
-        turnover = Turnover(Portfolios)
-        @test turnover[1] ≈ 0.1
+        Xₜ₋₁ = [0.5, 0.3, 0.2]   # Portfolio at t-1
+        Xₜ   = [0.4, 0.4, 0.2]   # Portfolio at t
+
+        turnover = Turnover(Xₜ₋₁, Xₜ)
+        @test turnover ≈ 0.1
     end
 end

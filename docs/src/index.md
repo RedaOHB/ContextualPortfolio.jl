@@ -31,7 +31,7 @@ where:
 ```ContextualOptimization.jl``` can be installed using Julia's package manager:
 ```julia
 using Pkg
-add.Pkg(ContextualOptimization)
+Pkg.add("ContextualOptimization")
 ```
 
 Or for the development version: 

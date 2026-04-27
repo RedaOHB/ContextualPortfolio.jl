@@ -12,19 +12,20 @@
 """
  
 function conditional_moments(data, contextual_information, last_context, first_context)
- 
-    n = size(data,2) 
-    d = size(contextual_information[:,2:end],2)  
+
+    data = copy(data)
+    n = size(data,2)
+    d = size(contextual_information[:,2:end],2)
     side_information = Float64.(Matrix(contextual_information[:,2:end]))
-       
-    # data standardization for consistency     
+
+    # data standardization for consistency
       # standardization parameters
         μ_return = mean(data[:,1:n-d], dims=1)  # mean of historical returns
         σ_return = std(data[:,1:n-d], dims=1)  # standard deviation of historical return
         μ_context = mean(side_information[first_context:last_context,:], dims=1)  # mean of contextual information
         σ_context = std(side_information[first_context:last_context,:], dims=1)  # standard deviation of contextual information
-        
-      # standardization 
+
+      # standardization
         data[:,1:n-d] = (data[:,1:n-d] .- μ_return) ./ σ_return
         data[:,n-d+1:end] = (data[:,n-d+1:end] .- μ_context) ./ σ_context
 

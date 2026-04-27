@@ -1,5 +1,6 @@
 # ContextualOptimization.jl
 
+[![CI](https://github.com/RedaOHB/ContextualOptimization.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/RedaOHB/ContextualOptimization.jl/actions/workflows/CI.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://RedaOHB.github.io/ContextualOptimization.jl/stable)
 
@@ -40,7 +41,7 @@ model = optimize_mv # Mean Variance model
 
 # Run backtest 
   # Define the parameters structure 
-  Parameters = backtestparameters( 
+  Parameters = backtestParameters( 
                estimation_horizon = 48, 
                evaluation_horizon = 1, 
                returns = returns, 
@@ -50,12 +51,12 @@ model = optimize_mv # Mean Variance model
                start_date = Date(2020,01,01), 
                end_date = Date(2024,12,31) ) 
   # Call solve function 
-  Portfolios, Performace_metrics, Global_performance = backtest_portfolio(Parameters) 
+  Portfolios, Performance_metrics, Global_performance = backtest_portfolio(Parameters) 
 
 # Evaluate performance
 println("Average return: ", Global_performance.Mean_return[1])
 println("Sharpe ratio: ", Global_performance.Sharpe_ratio[1])
-println("Average HHI: ", Global_performance[1])
+println("Average HHI: ", Global_performance.HHI[1])
 ```
 
 ## Methodology
@@ -140,16 +141,18 @@ Random.seed!(42)
 n_assets = 10
 n_context = 3
 
-dates = Date(2015, 01, 01):Day(1):Date(2024, 12, 31) # Daily retruns
+dates = Date(2015, 01, 01):Day(1):Date(2024, 12, 31) # Daily returns
+n_periods = length(dates)
 returns = DataFrame(Date = dates)
 for i in 1:n_assets
     returns[!, Symbol("Asset$i")] = randn(n_periods) * 0.01 .+ 0.0005
 end
 
-dates = Date(2015, 01, 01):Monthly(1):Date(2024, 12, 31) # Monthly features
+dates = Date(2015, 01, 01):Month(1):Date(2024, 12, 31) # Monthly features
+n_periods = length(dates)
 context = DataFrame(Date = dates)
 for i in 1:n_context
-    context_1[!, Symbol("Feature$i")] = randn(n_periods)
+    context[!, Symbol("Feature$i")] = randn(n_periods)
 end
 
 # Run backtest with mean-variance
@@ -169,13 +172,13 @@ Portfolios, Portfolio_performance, Global_performance = backtest_portfolio(Param
 println("Global performance Metrics:")
 println("  Mean Return: ", round(Global_performance.Mean_return[1] * 100, digits=2), "%")
 println("  Volatility: ", round(Global_performance.Volatility[1] * 100, digits=2), "%")
-println("  Sharpe Ratio: ", round(Global_performance.sharpe_ratio[1], digits=2))
+println("  Sharpe Ratio: ", round(Global_performance.Sharpe_ratio[1], digits=2))
 println(" Diversification index: ", round(Global_performance.HHI[1], digits=2))
 
 # Plot cumulative returns
-dates = Date(2019, 01, 01):Monthly(1):Date(2024, 12, 31) # Monthly features
+dates = Portfolio_performance.Start_Period
 
-plot(Portfolio_performance.Return, dates, 
+plot(dates, Portfolio_performance.Return, 
    xlabel="Dates",
    ylabel="Cumulative Return",
    title="Portfolio Performance",
@@ -183,10 +186,27 @@ plot(Portfolio_performance.Return, dates,
 
 ```
 
+## Solver
+
+The package uses [HiGHS](https://highs.dev) (open-source, MIT license) by default.
+You can use any JuMP-compatible QP solver by passing the `optimizer` keyword:
+
+```julia
+# Default (HiGHS — no license required)
+Parameters = backtestParameters(estimation_horizon=48, ...) 
+
+# Using Gurobi (requires a license)
+using Gurobi
+Parameters = backtestParameters(estimation_horizon=48, ..., optimizer=Gurobi.Optimizer)
+
+# Or pass the optimizer directly to a model function
+x = optimize_mv(μ, Σ, η; optimizer=Gurobi.Optimizer)
+```
+
 ## Requirements
 
 - Julia ≥ 1.6
-- JuMP.jl and an optimization solver (Gurobi)
+- JuMP.jl (HiGHS is included by default; other QP solvers can be used)
 - See `Project.toml` for full list of dependencies
 
 ## Citation

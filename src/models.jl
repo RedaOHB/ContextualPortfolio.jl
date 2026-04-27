@@ -1,48 +1,46 @@
 """
-  optimize_mv(μ, Σ, η)
+  optimize_mv(μ, Σ, η; optimizer=HiGHS.Optimizer)
 
   defines and solves the mean–variance portfolio optimization problem, returning the optimal asset weights.
-  
+
   # Parameters:
 
    - `μ` is the mean vector of data
    - `Σ` is the covariance matrix of data
-   - `η` the risk aversion parameter 
+   - `η` the risk aversion parameter
+   - `optimizer`: the JuMP-compatible solver to use (default: `HiGHS.Optimizer`)
 
   # mathematic formula:
 
-  Assuming a set of 𝑛 assets with expected returns μ = (μ₁,μ₂,…,μₙ) and covariance matrix of returns Σ, the mean_variance model finds 
+  Assuming a set of 𝑛 assets with expected returns μ = (μ₁,μ₂,…,μₙ) and covariance matrix of returns Σ, the mean_variance model finds
   the asset weights 𝐱 = (x₁,x₂,…,xₙ) that solve the following quadratic programming problem:
 
-                                       minₓ  -μᵀ𝐱 + η𝐱ᵀΣ𝐱 
+                                       minₓ  -μᵀ𝐱 + η𝐱ᵀΣ𝐱
                                        s.t   1ᵀ𝐱 = 1
                                                𝐱 ≥ 0
 """
 
 
-function optimize_mv(μ, Σ, η)
+function optimize_mv(μ, Σ, η; optimizer=HiGHS.Optimizer)
 
     n = length(μ)  # number of assets
 
-    model = Model(Gurobi.Optimizer)  # create an optimization model using the Gurobi solver
-
-    # solver parameters ------------------------------------------------------
-    set_optimizer_attribute(model, "TimeLimit", 600)
-    set_optimizer_attribute(model, "OutputFlag", 1)
-    # --------------------------------------------------------------------------
+    model = Model(optimizer)
+    set_time_limit_sec(model, 600)
+    set_silent(model)
 
     #--- variables:
-    @variable(model, x[1:n] >= 0)  # decision variables: weight invested in each asset 
+    @variable(model, x[1:n] >= 0)  # decision variables: weight invested in each asset
 
     #--- constraints:
     @constraint(model, sum(x) == 1)  # budget constraint: the sum of portfolio weights must equal 1
 
     #---objective:
-    @objective(model, Min, -sum(μ.*x) + η*x'*Σ*x)  # minimize variance and maximize return of portfolio 
+    @objective(model, Min, -sum(μ.*x) + η*x'*Σ*x)  # minimize variance and maximize return of portfolio
 
     optimize!(model)
 
-    println("Termination status: ", termination_status(model))  # the solver's termination status
+    println("Termination status: ", termination_status(model))
 
     return value.(x)
 end
@@ -50,20 +48,21 @@ end
 
 
 """
-  optimize_mvbu(μ, Σ, η, data)
+  optimize_mvbu(μ, Σ, η, data; optimizer=HiGHS.Optimizer)
 
   solve mean-variance optimization under box uncertainty on parameters
-  
+
   # Parameters:
 
    - `μ`: mean vector of data
    - `Σ`: covariance matrix of data
-   - `η`: risk aversion parameter 
+   - `η`: risk aversion parameter
    - `data`: historical returns
+   - `optimizer`: the JuMP-compatible solver to use (default: `HiGHS.Optimizer`)
 
   # mathematic formula:
 
-  Assuming a set of 𝑛 assets with expected returns μ = (μ₁,μ₂,…,μₙ) and covariance matrix of returns Σ, the mean_variance model finds 
+  Assuming a set of 𝑛 assets with expected returns μ = (μ₁,μ₂,…,μₙ) and covariance matrix of returns Σ, the mean_variance model finds
   the asset weights 𝐱 = (x₁,x₂,…,xₙ) that solve the following quadratic programming problem:
 
                                        minₓ  -μᵀ𝐱 + η𝐱ᵀΣ𝐱 + ϵᵀ𝐱
@@ -74,52 +73,50 @@ end
 
 """
 
-function optimize_mvbu(μ, Σ, η, data)
-    
+function optimize_mvbu(μ, Σ, η, data; optimizer=HiGHS.Optimizer)
+
       n = length(μ)  # number of assets
-      S = std(data, dims=1)   # standard deviation of each asset’s returns
+      S = std(data, dims=1)   # standard deviation of each asset's returns
       ϵ = 1.96 .* S ./ sqrt(size(data,1))   # the half-width of the 95% confidence interval for each mean return
 
-      model = Model(Gurobi.Optimizer)  # Create an optimization model using Gurobi
+      model = Model(optimizer)
+      set_time_limit_sec(model, 600)
+      set_silent(model)
 
-      # solver parameters ------------------------------------------------------
-      set_optimizer_attribute(model, "TimeLimit", 600)
-      set_optimizer_attribute(model, "OutputFlag", 1)
-      # --------------------------------------------------------------------------
-
-      #---variablres:
-      @variable(model, x[1:n] >= 0)  # decision variables: weight invested in each asset 
+      #---variables:
+      @variable(model, x[1:n] >= 0)  # decision variables: weight invested in each asset
 
       #---constraints:
       @constraint(model, sum(x) == 1)  # budget constraint: the sum of portfolio weights must equal 1
 
       #---objective:
-      @objective(model, Min, -sum(μ.*x) + η*x'*Σ*x + (ϵ*x)[1])  # minimize uncertainty penalty + variance and maximize return of portfolio  
+      @objective(model, Min, -sum(μ.*x) + η*x'*Σ*x + (ϵ*x)[1])  # minimize uncertainty penalty + variance and maximize return of portfolio
       # (ϵ * x)[1] represents the worst-case mean deviation due to uncertainty
 
       optimize!(model)
 
-      println("Termination status: ", termination_status(model))  # the solver's termination status
+      println("Termination status: ", termination_status(model))
 
       return value.(x)
 end
 
 
 """
-  optimize_mveu(μ, Σ, η, data)
+  optimize_mveu(μ, Σ, η, data; optimizer=HiGHS.Optimizer)
 
   solve mean-variance optimization under ellipsoidal uncertainty on parameters
-  
+
   # Parameters:
 
    - `μ`: mean vector of data
    - `Σ`: covariance matrix of data
-   - `η`: risk aversion parameter 
+   - `η`: risk aversion parameter
    - `data`: historical returns
+   - `optimizer`: the JuMP-compatible solver to use (default: `HiGHS.Optimizer`)
 
   # mathematic formula:
 
-  Assuming a set of 𝑛 assets with expected returns μ = (μ₁,μ₂,…,μₙ) and covariance matrix of returns Σ, the mean_variance model finds 
+  Assuming a set of 𝑛 assets with expected returns μ = (μ₁,μ₂,…,μₙ) and covariance matrix of returns Σ, the mean_variance model finds
   the asset weights 𝐱 = (x₁,x₂,…,xₙ) that solve the following quadratic programming problem:
 
                                        minₓ  -μᵀ𝐱 + η𝐱ᵀΣ𝐱 + ϵ*(𝐱ᵀ*Σ_mu*𝐱ᵀ)
@@ -130,11 +127,11 @@ end
         ϵ: the size (radius) of the ellipsoidal uncertainty set
 """
 
-function optimize_mveu(μ, Σ, η, data)
+function optimize_mveu(μ, Σ, η, data; optimizer=HiGHS.Optimizer)
 
     n = length(μ)  # number of assets
-    Σ_mu = zeros(n,n)  # initialize the covariance matrix of estimation errors in expected returns    
-    Σ_mu[diagind(Σ)] = diag(Σ)  # start with the diagonal of Σ (asset return variances)
+    Σ_mu = zeros(n,n)  # initialize the covariance matrix of estimation errors in expected returns
+    Σ_mu[diagind(Σ_mu)] = diag(Σ)  # start with the diagonal of Σ (asset return variances)
     for i in 1:n
         Σ_mu[i,i] = sqrt(Σ_mu[i,i])/sqrt(size(data,1))
     end
@@ -143,18 +140,15 @@ function optimize_mveu(μ, Σ, η, data)
     # where T = number of observations
 
     χ₂ = Chisq(n)   # the chi-square distribution with n degrees of freedom
-    𝒒_alpha = quantile(χ₂, 0.95)   # 95% quantile of the chi-square distribution    
+    𝒒_alpha = quantile(χ₂, 0.95)   # 95% quantile of the chi-square distribution
     ϵ = sqrt(𝒒_alpha)  # size (radius) of the ellipsoidal uncertainty set
- 
-    model = Model(Gurobi.Optimizer)  # create an optimization model using the Gurobi solver
 
-    # solver parameters ------------------------------------------------------
-    set_optimizer_attribute(model, "TimeLimit", 600)
-    set_optimizer_attribute(model, "OutputFlag", 1)
-    # --------------------------------------------------------------------------
+    model = Model(optimizer)
+    set_time_limit_sec(model, 600)
+    set_silent(model)
 
     #---variables:
-    @variable(model, x[1:n] >= 0)  # decision variables: weight invested in each asset 
+    @variable(model, x[1:n] >= 0)  # decision variables: weight invested in each asset
 
     #---constraints:
     @constraint(model, sum(x) == 1)  # budget constraint: the sum of portfolio weights must equal 1
@@ -165,8 +159,7 @@ function optimize_mveu(μ, Σ, η, data)
 
     optimize!(model)
 
-    println("Termination status: ", termination_status(model))  # the solver's termination status
-
+    println("Termination status: ", termination_status(model))
 
     return value.(x)
 end
