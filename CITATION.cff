@@ -7,7 +7,7 @@ authors:
   given-names: Fabian
   orcid: "https://orcid.org/0000-0003-1323-6787"
 message: "If you use this software, please cite our article in the Journal of Open Source Software."
-repository-code: "https://github.com/RedaOHB/ContextualOptimization.jl"
+repository-code: "https://github.com/RedaOHB/ContextualPortfolio.jl"
 preferred-citation:
   type: article
   authors:
