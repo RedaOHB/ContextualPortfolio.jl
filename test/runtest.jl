@@ -1,5 +1,5 @@
 using Test
-using ContextualOptimization
+using ContextualPortfolio
 using DataFrames, Dates
 using JuMP, HiGHS
 using Distributions, LinearAlgebra, Statistics, StatsBase, Random, CovarianceEstimation
@@ -7,7 +7,7 @@ using Distributions, LinearAlgebra, Statistics, StatsBase, Random, CovarianceEst
 # Set random seed for reproducibility
 Random.seed!(42)
 
-@testset "ContextualOptimization.jl" begin
+@testset "ContextualPortfolio.jl" begin
     include("test_models.jl")
     include("test_moments.jl")
     include("test_splitting.jl")

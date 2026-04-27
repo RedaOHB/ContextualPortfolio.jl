@@ -1,6 +1,6 @@
 # [Tutorial](@id Tutorial)
 
-This tutorial provides a step-by-step guide to using ContextualOptimization.jl for portfolio optimization with contextual information.
+This tutorial provides a step-by-step guide to using ContextualPortfolio.jl for portfolio optimization with contextual information.
 
 ## Overview
 
@@ -14,7 +14,7 @@ In this tutorial, you will learn how to:
 ## Setup 
 Make sure you have the package installed and loaded:
 ```julia
-using ContextualOptimization  # our package
+using ContextualPortfolio  # our package
 using DataFrames, Dates  # for data handling
 using JuMP, HiGHS  # for modeling and solving (HiGHS is the default open-source solver)
 using Distributions, LinearAlgebra, Statistics, StatsBase, Random, CovarianceEstimation  # for mathematical manipulation
@@ -30,7 +30,7 @@ using Plots  # for visualization
 
 ### Data requirements 
 
-ContextualOptimization.jl requires two main data inputs, returns and contextual information.
+ContextualPortfolio.jl requires two main data inputs, returns and contextual information.
 
 1. **Returns** (DataFrame): Historical asset returns with a `Date` column followed by asset columns
 2. **Context** (DataFrame): Contextual features with a `Date` column followed by feature columns
@@ -41,7 +41,7 @@ ContextualOptimization.jl requires two main data inputs, returns and contextual 
 
 **Option 1: Using Tiingo API**
 
-You can load historical returns from various sources. For convenience, we provide a helper function to load historical returns from the Tiingo financial data API. This function is available in the [test directory](https://github.com/RedaOHB/ContextualOptimization.jl/tree/main/test/data).
+You can load historical returns from various sources. For convenience, we provide a helper function to load historical returns from the Tiingo financial data API. This function is available in the [test directory](https://github.com/RedaOHB/ContextualPortfolio.jl/tree/main/test/data).
 ```julia 
 # Include the data loading utilities
   include("test/data/data_loading.jl")  
@@ -244,7 +244,7 @@ println("  Average Turnover: ", round(global_performance.turnover[1], digits=3))
 
 Here's a complete working example: 
 ```julia
-using ContextualOptimization
+using ContextualPortfolio
 using DataFrames, Dates, Random
 using Plots
 

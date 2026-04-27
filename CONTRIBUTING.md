@@ -1,18 +1,18 @@
-# Contributing to ContextualOptimization.jl
+# Contributing to ContextualPortfolio.jl
 
-Thank you for your interest in contributing to ContextualOptimization.jl!
+Thank you for your interest in contributing to ContextualPortfolio.jl!
 
 ## How to Contribute
 
 ### Reporting Issues
 
 If you find a bug or have a feature request, please open an issue on the
-[GitHub issue tracker](https://github.com/RedaOHB/ContextualOptimization.jl/issues).
+[GitHub issue tracker](https://github.com/RedaOHB/ContextualPortfolio.jl/issues).
 Include:
 
 - A clear description of the problem or feature
 - A minimal reproducible example (if reporting a bug)
-- The versions of Julia and ContextualOptimization.jl you are using
+- The versions of Julia and ContextualPortfolio.jl you are using
 
 ### Submitting Changes
 
@@ -28,7 +28,7 @@ Include:
 
 ```julia
 using Pkg
-Pkg.develop(url="https://github.com/RedaOHB/ContextualOptimization.jl")
+Pkg.develop(url="https://github.com/RedaOHB/ContextualPortfolio.jl")
 ```
 
 ### Code Style
@@ -44,7 +44,7 @@ New optimization models should:
 1. Accept an `optimizer` keyword argument (default `HiGHS.Optimizer`)
 2. Use solver-agnostic JuMP functions (`set_silent`, `set_time_limit_sec`)
 3. Include a docstring with the mathematical formulation
-4. Be added to `src/models.jl` and exported in `src/ContextualOptimization.jl`
+4. Be added to `src/models.jl` and exported in `src/ContextualPortfolio.jl`
 5. Have corresponding tests in `test/test_models.jl`
 
 ## Questions

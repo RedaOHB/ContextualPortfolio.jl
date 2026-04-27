@@ -1,4 +1,4 @@
-module ContextualOptimization
+module ContextualPortfolio
 
 using JuMP, HiGHS
 using DataFrames, Dates
@@ -32,4 +32,4 @@ export Assets_number, Diversification, Turnover
 # Export utilities
 export split_sample, align
 
-end # module ContextualOptimization
+end # module ContextualPortfolio

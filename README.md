@@ -1,10 +1,10 @@
-# ContextualOptimization.jl
+# ContextualPortfolio.jl
 
-[![CI](https://github.com/RedaOHB/ContextualOptimization.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/RedaOHB/ContextualOptimization.jl/actions/workflows/CI.yml)
+[![CI](https://github.com/RedaOHB/ContextualPortfolio.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/RedaOHB/ContextualPortfolio.jl/actions/workflows/CI.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://RedaOHB.github.io/ContextualOptimization.jl/stable)
+[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://RedaOHB.github.io/ContextualPortfolio.jl/stable)
 
-`ContextualOptimization.jl` is a Julia package that solves portfolio optimization problems by leveraging contextual information about market conditions. The package implements a rolling window backtesting framework with multiple optimization models.
+`ContextualPortfolio.jl` is a Julia package that solves portfolio optimization problems by leveraging contextual information about market conditions. The package implements a rolling window backtesting framework with multiple optimization models.
 
 ### Key Features
 
@@ -17,18 +17,18 @@
 ## Installation 
 ```julia 
 using Pkg
-Pkg.add("ContextualOptimization")
+Pkg.add("ContextualPortfolio")
 ```
 
 Or install the development version:
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/RedaOHB/ContextualOptimization.jl")
+Pkg.add(url="https://github.com/RedaOHB/ContextualPortfolio.jl")
 ```
 
 ## Quick start
 ```julia 
-using ContextualOptimization 
+using ContextualPortfolio 
 using DataFrames, Dates 
 
 # Load your data (returns and contextual features) 
@@ -61,7 +61,7 @@ println("Average HHI: ", Global_performance.HHI[1])
 
 ## Methodology
 
-`ContextualOptimization.jl` implements a contextual optimization framework based on conditional moments. Unlike traditional approaches that separate prediction and optimization, this method jointly optimizes portfolio decisions based on contextual features.
+`ContextualPortfolio.jl` implements a contextual optimization framework based on conditional moments. Unlike traditional approaches that separate prediction and optimization, this method jointly optimizes portfolio decisions based on contextual features.
 
 ### Conditional moments
 
@@ -108,9 +108,9 @@ The package computes comprehensive performance metrics:
 
 For detailed documentation, tutorial, and examples, see:
 
-- [**Tutorial**](https://RedaOHB.github.io/ContextualOptimization.jl/stable/tutorial/)
-- [**API Reference**](https://RedaOHB.github.io/ContextualOptimization.jl/stable/api/)
-- [**Methodology**](https://RedaOHB.github.io/ContextualOptimization.jl/stable/method/)
+- [**Tutorial**](https://RedaOHB.github.io/ContextualPortfolio.jl/stable/tutorial/)
+- [**API Reference**](https://RedaOHB.github.io/ContextualPortfolio.jl/stable/api/)
+- [**Methodology**](https://RedaOHB.github.io/ContextualPortfolio.jl/stable/method/)
 
 ## Data loading 
 
@@ -133,7 +133,7 @@ See `test/data/README.md` for setup instructions (requires API key).
 
 Complete example with synthetic data:
 ```julia
-using ContextualOptimization
+using ContextualPortfolio
 using Random, Dates
 
 # Generate synthetic data
@@ -211,11 +211,11 @@ x = optimize_mv(μ, Σ, η; optimizer=Gurobi.Optimizer)
 
 ## Citation
 
-If you use ContextualOptimization.jl in your research, please cite:
+If you use ContextualPortfolio.jl in your research, please cite:
 
 ```bibtex
 @article{RedaOuahib2026,
-  title={ContextualOptimization.jl: A Julia Package for contextual optimization},
+  title={ContextualPortfolio.jl: A Julia Package for contextual optimization},
   author={Reda Ouahib and Fabian Bastin},
   journal={Journal of Open Source Software},
   year={2026},

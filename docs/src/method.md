@@ -1,6 +1,6 @@
 # [Method](@id Method)
 
-`ContextualOptimization.jl` implements a contextual portfolio optimization framework based on a rolling window backtesting approach with periodic rebalancing. The method operates in two key phases:
+`ContextualPortfolio.jl` implements a contextual portfolio optimization framework based on a rolling window backtesting approach with periodic rebalancing. The method operates in two key phases:
 1. **Estimation phase**: Model training and parameter estimation using historical data.
 2. **Validation phase**: Out-of-sample performance evaluation.
 
@@ -20,7 +20,7 @@ where:
 * $\Sigma_{rr}$ and $\Sigma_{ss}$ are the covariance matrices of returns and contextual features, respectively. 
 * $\Sigma_{rs} = \Sigma_{sr}^{T}$ represents the cross-covariance between returns and contextual features.
 
-The next step is solving optimization problem to determine optimal portfolio weights. The optimization model can be chosen from several models defined in [`models.jl`](https://github.com/RedaOHB/ContextualOptimization.jl/src/models.jl).
+The next step is solving optimization problem to determine optimal portfolio weights. The optimization model can be chosen from several models defined in [`models.jl`](https://github.com/RedaOHB/ContextualPortfolio.jl/src/models.jl).
 
 As an example, the mean-variance formulation is:
 ```math

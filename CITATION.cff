@@ -17,7 +17,7 @@ preferred-citation:
     - family-names: Bastin
       given-names: Fabian
       orcid: "https://orcid.org/0000-0003-1323-6787"
-  title: "ContextualOptimization.jl: A Julia Package for Contextual Portfolio Optimization"
+  title: "ContextualPortfolio.jl: A Julia Package for Contextual Portfolio Optimization"
   journal: "Journal of Open Source Software"
   year: 2026
   # volume: 

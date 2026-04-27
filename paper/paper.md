@@ -1,5 +1,5 @@
 ---
-title: 'ContextualOptimization.jl: A Julia Package for Contextual Portfolio Optimization'
+title: 'ContextualPortfolio.jl: A Julia Package for Contextual Portfolio Optimization'
 tags:
   - Julia
   - portfolio optimization
@@ -23,7 +23,7 @@ bibliography: paper.bib
 
 # Summary
 
-`ContextualOptimization.jl` is a Julia package that implements a contextual
+`ContextualPortfolio.jl` is a Julia package that implements a contextual
 portfolio optimization framework.  Unlike traditional portfolio optimization,
 which treats expected returns and covariances as fixed inputs, contextual
 optimization conditions these estimates on observable side information such as
@@ -42,7 +42,7 @@ ignoring information that could improve decisions [@Nguyen2024].  Second, most
 existing software either targets a single model (e.g., mean--variance only) or
 requires deep expertise in optimization modelling languages.
 
-`ContextualOptimization.jl` addresses both gaps.  By computing conditional
+`ContextualPortfolio.jl` addresses both gaps.  By computing conditional
 moments of returns given contextual features and feeding them directly into the
 optimization, the package implements the contextual optimization framework
 of @Nguyen2024 in a single, easy-to-use interface.  It ships with robust
@@ -63,7 +63,7 @@ Existing tools such as `PortfolioAnalytics` in R [@PortfolioAnalytics] or
 utilities but do not offer built-in contextual conditioning.  In the Julia
 ecosystem, `PortfolioOpt.jl` provides basic mean--variance optimization but
 lacks contextual moment estimation, robust models, and backtesting.
-`ContextualOptimization.jl` fills this niche by combining conditional moment
+`ContextualPortfolio.jl` fills this niche by combining conditional moment
 estimation, robust optimization, and rolling-window backtesting in a single
 package.
 
@@ -99,7 +99,7 @@ error in the mean, producing more conservative allocations.
 A typical workflow requires fewer than ten lines of code:
 
 ```julia
-using ContextualOptimization, DataFrames, Dates
+using ContextualPortfolio, DataFrames, Dates
 
 params = backtestParameters(
     estimation_horizon = 48, evaluation_horizon = 1,

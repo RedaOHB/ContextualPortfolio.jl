@@ -1,5 +1,5 @@
 """
-Data Loading Utilities for ContextualOptimization.jl
+Data Loading Utilities for ContextualPortfolio.jl
 
 This module provides helper functions to load financial data from various sources,
 particularly the Tiingo API for historical returns.

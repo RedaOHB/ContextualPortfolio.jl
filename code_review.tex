@@ -48,7 +48,7 @@
 }
 
 \title{\textbf{Code Review Report}\\[0.3em]
-\large ContextualOptimization.jl}
+\large ContextualPortfolio.jl}
 \author{Automated Review}
 \date{April 26, 2026}
 
@@ -58,7 +58,7 @@
 
 \begin{abstract}
 This document summarizes the issues identified during a code review of the
-\texttt{ContextualOptimization.jl} Julia package and describes the corrections applied.
+\texttt{ContextualPortfolio.jl} Julia package and describes the corrections applied.
 The issues range from critical bugs preventing module loading to minor typographical
 errors in documentation. A total of 19 issues were identified across 12 files.
 \end{abstract}
@@ -70,7 +70,7 @@ errors in documentation. A total of 19 issues were identified across 12 files.
 \section{Overview}
 %=============================================================================
 
-The \texttt{ContextualOptimization.jl} package implements contextual portfolio
+The \texttt{ContextualPortfolio.jl} package implements contextual portfolio
 optimization using conditional moments and a rolling-window backtesting framework.
 The review covered all source files (\texttt{src/}), test files (\texttt{test/}),
 project configuration (\texttt{Project.toml}), documentation (\texttt{README.md},
@@ -117,7 +117,7 @@ The \texttt{[deps]} section listed only \texttt{Documenter}, while the module
 imports 18 packages:
 
 \begin{lstlisting}
-# src/ContextualOptimization.jl
+# src/ContextualPortfolio.jl
 using JuMP, Gurobi
 using DataFrames, Dates, DelimitedFiles, ExcelFiles, XLSX
 using Distributions, CovarianceEstimation, LinearAlgebra,
@@ -126,7 +126,7 @@ using Plots
 using MarketData, YFinance, JSON3, HTTP, DotEnv
 \end{lstlisting}
 
-Without these entries, \texttt{Pkg.add("ContextualOptimization")} cannot resolve
+Without these entries, \texttt{Pkg.add("ContextualPortfolio")} cannot resolve
 dependencies and the package cannot be loaded.
 
 \textbf{Fix applied:} Added all 18 runtime dependencies with their correct UUIDs
@@ -180,7 +180,7 @@ include("utils.jl")
 include("performance.jl")
 \end{lstlisting}
 
-These files are already included by \texttt{src/ContextualOptimization.jl}
+These files are already included by \texttt{src/ContextualPortfolio.jl}
 (lines~11--16). Double inclusion redefines all functions and, critically, attempts
 to redefine \texttt{struct backtestParameters}, which Julia does not allow.
 This causes an \texttt{ErrorException} on module load.
@@ -340,12 +340,12 @@ Comment read \texttt{\#---variablres:} instead of \texttt{\#---variables:}.
 \textbf{Fix applied:} Corrected the spelling.
 
 %-----------------------------------------------------------------------------
-\subsection{Typo in \texttt{ContextualOptimization.jl}}
+\subsection{Typo in \texttt{ContextualPortfolio.jl}}
 \label{sec:typo-main}
 %-----------------------------------------------------------------------------
 
 \textbf{Severity:} Minor\\
-\textbf{File:} \texttt{src/ContextualOptimization.jl}, line 3\\[0.3em]
+\textbf{File:} \texttt{src/ContextualPortfolio.jl}, line 3\\[0.3em]
 Comment read \texttt{extenal} instead of \texttt{external}.
 
 \textbf{Fix applied:} Corrected the spelling.
@@ -485,7 +485,7 @@ supported by the open-source solver HiGHS.
     \texttt{backtestParameters} struct. The field is passed through to all
     model calls via the \texttt{optimizer} keyword.
 
-  \item \textbf{\texttt{src/ContextualOptimization.jl}}: Changed
+  \item \textbf{\texttt{src/ContextualPortfolio.jl}}: Changed
     \texttt{using Gurobi} to \texttt{using HiGHS}.
 
   \item \textbf{\texttt{Project.toml}}: Replaced the \texttt{Gurobi}
@@ -594,7 +594,7 @@ Table~\ref{tab:summary} lists all files modified and the nature of changes.
 \texttt{CITATION.cff}             & Minor     & Fixed author name ``OHB'' $\to$ ``Ouahib'' \\
 \texttt{CONTRIBUTING.md}          & New       & Community contribution guidelines \\
 \texttt{CODE\_OF\_CONDUCT.md}     & New       & Contributor Covenant code of conduct \\
-\texttt{src/ContextualOptimization.jl} & Important & Removed 9 unused \texttt{using} statements; added missing exports; fixed typo \\
+\texttt{src/ContextualPortfolio.jl} & Important & Removed 9 unused \texttt{using} statements; added missing exports; fixed typo \\
 \texttt{src/backtest.jl}          & Critical  & Removed double includes; fixed \texttt{isnothing}; fixed bare variable refs; fixed \texttt{last\_context} scope; added \texttt{optimizer} field \\
 \texttt{src/models.jl}            & Enhancement & Added \texttt{optimizer} keyword; solver-agnostic JuMP API; fixed typo and \texttt{diagind} \\
 \texttt{src/moments.jl}           & Bug       & Added \texttt{copy(data)} to avoid mutation \\

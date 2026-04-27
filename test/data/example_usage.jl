@@ -1,5 +1,5 @@
 """
-Example usage of data loading utilities for ContextualOptimization.jl
+Example usage of data loading utilities for ContextualPortfolio.jl
 
 """
 

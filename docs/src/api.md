@@ -1,6 +1,6 @@
 # API reference
 
-This page provides detailed documentation for all exported functions and types in ContextualOptimization.jl.
+This page provides detailed documentation for all exported functions and types in ContextualPortfolio.jl.
 
 ```@contents
 Pages = ["api.md"]

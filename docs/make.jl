@@ -1,12 +1,12 @@
 using Documenter
-using ContextualOptimization
+using ContextualPortfolio
 
 makedocs(
-    sitename = "ContextualOptimization.jl",
+    sitename = "ContextualPortfolio.jl",
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true"
     ),
-    modules = [ContextualOptimization],
+    modules = [ContextualPortfolio],
     pages = [
         "Home" => "index.md",
         "Method" => "method.md",
@@ -16,6 +16,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/RedaOHB/ContextualOptimization.jl.git",
+    repo = "github.com/RedaOHB/ContextualPortfolio.jl.git",
     devbranch = "main"
 )

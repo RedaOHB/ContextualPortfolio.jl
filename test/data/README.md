@@ -1,6 +1,6 @@
 # Data Loading Utilities
 
-This directory contains helper functions for loading financial data used in ContextualOptimization.jl examples and tests.
+This directory contains helper functions for loading financial data used in ContextualPortfolio.jl examples and tests.
 
 ## Quick Start
 ```julia
