@@ -16,7 +16,7 @@ Make sure you have the package installed and loaded:
 ```julia
 using ContextualPortfolio  # our package
 using DataFrames, Dates  # for data handling
-using JuMP, HiGHS  # for modeling and solving (HiGHS is the default open-source solver)
+using JuMP, Clarabel  # for modeling and solving (Clarabel is the default open-source solver)
 using Distributions, LinearAlgebra, Statistics, StatsBase, Random, CovarianceEstimation  # for mathematical manipulation
 ```
 
@@ -154,7 +154,7 @@ Now we can run the backtest using our prepared data and chosen model. Before cal
 | `η`                    | risk-aversion parameter          |   
 | `start_date`           | begin date of optimization       |
 | `end_date`             | end date of optimization         |
-| `optimizer`            | JuMP solver (default: HiGHS)     |
+| `optimizer`            | JuMP solver (default: Clarabel)     |
 
 The structure is defined as follows:
 ```julia
@@ -300,7 +300,7 @@ plot(dates, portfolio_performance.Return,
 1. **Contextual data frequency**: Ensure context data are on a monthly basis
 2. **Feature Selection**: Choose contextual features relevant to your asset universe
 3. **Parameter Tuning**: Experiment with `η`, `estimation_horizon`, and `evaluation_horizon`
-4. **Solver Choice**: The default solver HiGHS is open-source; pass `optimizer=Gurobi.Optimizer` for Gurobi
+4. **Solver Choice**: The default solver Clarabel is open-source; pass `optimizer=Gurobi.Optimizer` for Gurobi
 5. **Validation**: Always evaluate on true out-of-sample data
 
 ## Next Steps

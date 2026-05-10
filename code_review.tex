@@ -457,7 +457,7 @@ turnover = Turnover(X_t_minus_1, X_t)
 \end{lstlisting}
 
 %=============================================================================
-\section{Solver Abstraction: Gurobi $\to$ HiGHS Default}
+\section{Solver Abstraction: Gurobi $\to$ Clarabel Default}
 \label{sec:solver}
 %=============================================================================
 
@@ -469,30 +469,30 @@ for users without academic or commercial access.
 
 All three models (\texttt{optimize\_mv}, \texttt{optimize\_mvbu},
 \texttt{optimize\_mveu}) solve convex quadratic programs, which are fully
-supported by the open-source solver HiGHS.
+supported by the open-source solver Clarabel.
 
 \textbf{Changes applied:}
 
 \begin{enumerate}
   \item \textbf{\texttt{src/models.jl}}: Added an \texttt{optimizer} keyword
-    argument (default: \texttt{HiGHS.Optimizer}) to all three functions.
+    argument (default: \texttt{Clarabel.Optimizer}) to all three functions.
     Replaced Gurobi-specific solver attributes (\texttt{OutputFlag},
     \texttt{TimeLimit}) with solver-agnostic JuMP functions
     (\texttt{set\_silent}, \texttt{set\_time\_limit\_sec}).
 
   \item \textbf{\texttt{src/backtest.jl}}: Added an \texttt{optimizer} field
-    (type \texttt{Any}, default \texttt{HiGHS.Optimizer}) to the
+    (type \texttt{Any}, default \texttt{Clarabel.Optimizer}) to the
     \texttt{backtestParameters} struct. The field is passed through to all
     model calls via the \texttt{optimizer} keyword.
 
   \item \textbf{\texttt{src/ContextualPortfolio.jl}}: Changed
-    \texttt{using Gurobi} to \texttt{using HiGHS}.
+    \texttt{using Gurobi} to \texttt{using Clarabel}.
 
   \item \textbf{\texttt{Project.toml}}: Replaced the \texttt{Gurobi}
-    dependency with \texttt{HiGHS}.
+    dependency with \texttt{Clarabel}.
 
   \item \textbf{\texttt{test/runtest.jl}}: Changed \texttt{using Gurobi} to
-    \texttt{using HiGHS}.
+    \texttt{using Clarabel}.
 
   \item \textbf{\texttt{docs/src/tutorial.md}}: Updated the setup imports.
 
@@ -524,7 +524,7 @@ and backtesting functionality.
 
 \textbf{Fix applied:} Removed all unused packages from \texttt{using} in the
 module file and from \texttt{[deps]} in \texttt{Project.toml}. The core
-dependencies are now: \texttt{JuMP}, \texttt{HiGHS}, \texttt{DataFrames},
+dependencies are now: \texttt{JuMP}, \texttt{Clarabel}, \texttt{DataFrames},
 \texttt{Dates}, \texttt{Distributions}, \texttt{CovarianceEstimation},
 \texttt{LinearAlgebra}, \texttt{Statistics}, \texttt{StatsBase}.
 

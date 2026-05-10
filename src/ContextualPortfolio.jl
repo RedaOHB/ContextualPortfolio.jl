@@ -1,6 +1,6 @@
 module ContextualPortfolio
 
-using JuMP, HiGHS
+using JuMP, Clarabel
 using DataFrames, Dates
 using Distributions, CovarianceEstimation, LinearAlgebra, Statistics, StatsBase
 

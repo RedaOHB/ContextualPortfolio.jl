@@ -41,7 +41,7 @@ Pkg.develop(url="https://github.com/RedaOHB/ContextualPortfolio.jl")
 
 New optimization models should:
 
-1. Accept an `optimizer` keyword argument (default `HiGHS.Optimizer`)
+1. Accept an `optimizer` keyword argument (default `Clarabel.Optimizer`)
 2. Use solver-agnostic JuMP functions (`set_silent`, `set_time_limit_sec`)
 3. Include a docstring with the mathematical formulation
 4. Be added to `src/models.jl` and exported in `src/ContextualPortfolio.jl`

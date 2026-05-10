@@ -9,7 +9,7 @@ struct  backtestParameters
     end_date::Date
     optimizer::Any
 
-    function backtestParameters(; estimation_horizon, evaluation_horizon, returns, context, model, η, start_date, end_date, optimizer=HiGHS.Optimizer)
+    function backtestParameters(; estimation_horizon, evaluation_horizon, returns, context, model, η, start_date, end_date, optimizer=Clarabel.Optimizer)
         new(estimation_horizon, evaluation_horizon, returns, context, model, η, start_date, end_date, optimizer)
     end
 end
@@ -34,7 +34,7 @@ end
    - `η`: Risk aversion parameter
    - `start_date`: starting date of the dataset
    - `end_date`: ending date of the dataset
-   - `optimizer`: JuMP-compatible solver (default: `HiGHS.Optimizer`)
+   - `optimizer`: JuMP-compatible solver (default: `Clarabel.Optimizer`)
 
 """
 
@@ -103,7 +103,7 @@ function backtest_portfolio(params::backtestParameters)
 
           # validation set
             Test = Test[:,1:size(Test,2)-size(params.context,2)+1]
-
+ 
         end
 
         𝐑 = Test * X
@@ -135,6 +135,8 @@ function backtest_portfolio(params::backtestParameters)
 
     end
     portfolio_performance.turnover = turn
+    portfolio_performance.Cumulative_Return =  cumprod(1 .+ portfolio_performance.Return) .- 1  # calculte the cumulative return
+
 
     # evaluate the global performance (annual frequency)
       # store the global performance metrics

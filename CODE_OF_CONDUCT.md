@@ -26,7 +26,7 @@ Examples of unacceptable behavior:
 - Publishing others' private information without explicit permission
 - Other conduct which could reasonably be considered inappropriate
 
-## Enforcement
+## Enforcement 
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the project maintainers. All complaints will be reviewed and

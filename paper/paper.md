@@ -54,8 +54,8 @@ train/validate cycle and produces a comprehensive set of performance metrics
 empirical studies.
 
 The package is built on JuMP [@Lubin2023], the Julia mathematical programming
-framework, and defaults to the open-source HiGHS solver [@Huangfu2018], removing
-any licensing barrier.  Users may substitute any JuMP-compatible quadratic
+framework, and defaults to the open-source Clarabel solver [@Goulart2024], 
+avoiding licensing barriers. Users may substitute any JuMP-compatible quadratic
 programming solver.
 
 Existing tools such as `PortfolioAnalytics` in R [@PortfolioAnalytics] or
@@ -115,7 +115,7 @@ The solver can be changed via the `optimizer` keyword (e.g.,
 
 # Acknowledgements
 
-We thank the developers of JuMP, HiGHS, and the Julia data-science ecosystem
+We thank the developers of JuMP, Clarabel, and the Julia data-science ecosystem
 for the tools that made this package possible.  Economic data used in examples
 is sourced from FRED (Federal Reserve Economic Data) and Tiingo.
 

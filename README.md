@@ -188,11 +188,11 @@ plot(dates, Portfolio_performance.Return,
 
 ## Solver
 
-The package uses [HiGHS](https://highs.dev) (open-source, MIT license) by default.
+The package uses [Clarabel](https://clarabel.org) (open-source, MIT license) by default.
 You can use any JuMP-compatible QP solver by passing the `optimizer` keyword:
 
 ```julia
-# Default (HiGHS — no license required)
+# Default (Clarabel — no license required)
 Parameters = backtestParameters(estimation_horizon=48, ...) 
 
 # Using Gurobi (requires a license)
@@ -206,7 +206,7 @@ x = optimize_mv(μ, Σ, η; optimizer=Gurobi.Optimizer)
 ## Requirements
 
 - Julia ≥ 1.6
-- JuMP.jl (HiGHS is included by default; other QP solvers can be used)
+- JuMP.jl (Clarabel is included by default; other QP solvers can be used)
 - See `Project.toml` for full list of dependencies
 
 ## Citation

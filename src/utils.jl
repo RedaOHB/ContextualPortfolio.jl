@@ -24,7 +24,8 @@
 function align(data_1::DataFrame, data_2::DataFrame)
 
     if size(data_1, 1) == size(data_2, 1) 
-        Data = leftjoin(data_1, data_2, on=[:Date])
+        col = names(data_1)[1]
+        Data = leftjoin(data_1, data_2, on=[col])
     else
         n = size(data_1, 2)
         # add columns for months and years to enable duplication

@@ -145,12 +145,12 @@ end
 
 """
 
-function context_data(file_path, file_type)
+function context_data(file_path, file_type, sheet_name)
 
     if file_type == "xlsx"
         # Load contextual data from Excel file
           xf = XLSX.readxlsx(file_path)
-          sheet = xf["Sheet1"]
+          sheet = xf[sheet_name]
           data = sheet[:]   
         # Convert to DataFrame  
           headers = Symbol.(data[1, :])

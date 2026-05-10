@@ -1,5 +1,5 @@
 """
-  optimize_mv(μ, Σ, η; optimizer=HiGHS.Optimizer)
+  optimize_mv(μ, Σ, η; optimizer=Clarabel.Optimizer)
 
   defines and solves the mean–variance portfolio optimization problem, returning the optimal asset weights.
 
@@ -8,7 +8,7 @@
    - `μ` is the mean vector of data
    - `Σ` is the covariance matrix of data
    - `η` the risk aversion parameter
-   - `optimizer`: the JuMP-compatible solver to use (default: `HiGHS.Optimizer`)
+   - `optimizer`: the JuMP-compatible solver to use (default: `Clarabel.Optimizer`)
 
   # mathematic formula:
 
@@ -21,7 +21,7 @@
 """
 
 
-function optimize_mv(μ, Σ, η; optimizer=HiGHS.Optimizer)
+function optimize_mv(μ, Σ, η; optimizer=Clarabel.Optimizer)
 
     n = length(μ)  # number of assets
 
@@ -48,7 +48,7 @@ end
 
 
 """
-  optimize_mvbu(μ, Σ, η, data; optimizer=HiGHS.Optimizer)
+  optimize_mvbu(μ, Σ, η, data; optimizer=Clarabel.Optimizer)
 
   solve mean-variance optimization under box uncertainty on parameters
 
@@ -58,7 +58,7 @@ end
    - `Σ`: covariance matrix of data
    - `η`: risk aversion parameter
    - `data`: historical returns
-   - `optimizer`: the JuMP-compatible solver to use (default: `HiGHS.Optimizer`)
+   - `optimizer`: the JuMP-compatible solver to use (default: `Clarabel.Optimizer`)
 
   # mathematic formula:
 
@@ -73,7 +73,7 @@ end
 
 """
 
-function optimize_mvbu(μ, Σ, η, data; optimizer=HiGHS.Optimizer)
+function optimize_mvbu(μ, Σ, η, data; optimizer=Clarabel.Optimizer)
 
       n = length(μ)  # number of assets
       S = std(data, dims=1)   # standard deviation of each asset's returns
@@ -102,7 +102,7 @@ end
 
 
 """
-  optimize_mveu(μ, Σ, η, data; optimizer=HiGHS.Optimizer)
+  optimize_mveu(μ, Σ, η, data; optimizer=Clarabel.Optimizer)
 
   solve mean-variance optimization under ellipsoidal uncertainty on parameters
 
@@ -112,7 +112,7 @@ end
    - `Σ`: covariance matrix of data
    - `η`: risk aversion parameter
    - `data`: historical returns
-   - `optimizer`: the JuMP-compatible solver to use (default: `HiGHS.Optimizer`)
+   - `optimizer`: the JuMP-compatible solver to use (default: `Clarabel.Optimizer`)
 
   # mathematic formula:
 
@@ -127,7 +127,7 @@ end
         ϵ: the size (radius) of the ellipsoidal uncertainty set
 """
 
-function optimize_mveu(μ, Σ, η, data; optimizer=HiGHS.Optimizer)
+function optimize_mveu(μ, Σ, η, data; optimizer=Clarabel.Optimizer)
 
     n = length(μ)  # number of assets
     Σ_mu = zeros(n,n)  # initialize the covariance matrix of estimation errors in expected returns

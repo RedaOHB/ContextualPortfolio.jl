@@ -1,7 +1,7 @@
 using Test
 using ContextualPortfolio
 using DataFrames, Dates
-using JuMP, HiGHS
+using JuMP, Clarabel
 using Distributions, LinearAlgebra, Statistics, StatsBase, Random, CovarianceEstimation
 
 # Set random seed for reproducibility
