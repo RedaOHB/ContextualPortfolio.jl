@@ -154,7 +154,7 @@ function optimize_mveu(μ, Σ, η, data; optimizer=Clarabel.Optimizer)
     @constraint(model, sum(x) == 1)  # budget constraint: the sum of portfolio weights must equal 1
 
     #---objective:
-    @objective(model, Min, -sum(μ.*x) + η*x'*Σ*x + ϵ*(x'*Σ_mu*x) )  # minimize: variance + uncertainty-adjustment and maximize return of portfolio
+    @objective(model, Min, -sum(μ.*x) + η*x'*Σ*x + ϵ*(x'*Σ_mu*x))  # minimize: variance + uncertainty-adjustment and maximize return of portfolio
     # x' Σ_mu x     = uncertainty penalty from ellipsoidal mean estimation error
 
     optimize!(model)

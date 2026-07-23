@@ -48,7 +48,7 @@ function conditional_moments(data, contextual_information, last_context, first_c
         σ_stand_context = std(side_information[first_context:last_context,:], dims=1) 
         s = (side_information[last_context,:] .- vec(μ_stand_context)) ./ vec(σ_stand_context)  # standarization
 
-      # conditional mean
+      # conditional mean  
         μᵣ_ₛ = μᵣ + Σᵣₛ * (Σₛₛ \ (s - μₛ))      # μᵣ + Σᵣₛ * inv(Σₛₛ) * (s - μₛ)  
       # conditional covariance
         Σᵣ_ₛ = Σᵣᵣ - Σᵣₛ * (Σₛₛ \ Σₛᵣ)     # Σᵣᵣ - Σᵣₛ * inv(Σₛₛ) * Σₛᵣ 

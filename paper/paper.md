@@ -101,17 +101,60 @@ A typical workflow requires fewer than ten lines of code:
 ```julia
 using ContextualPortfolio, DataFrames, Dates
 
-params = backtestParameters(
+params = Backtest_Parameters(
     estimation_horizon = 48, evaluation_horizon = 1,
     returns = returns, context = context,
     model = optimize_mv, η = 1.0,
     start_date = Date(2015,1,1), end_date = Date(2024,12,31))
 
-portfolios, perf, global_perf = backtest_portfolio(params)
+portfolios, perf, average_perf, global_perf = backtest_portfolio(params)
 ```
 
 The solver can be changed via the `optimizer` keyword (e.g.,
 `optimizer = Gurobi.Optimizer`).
+
+To build a portfolio without contextual information, set `context = nothing`. For an equal-weight portfolio, use `model = :EqualWeight`.
+
+# Numerical experiments
+
+To assess the effectiveness of the contextual approach, we construct portfolios over a 20-year horizon and compare performance with and without contextual information. We generate synthetic data composed of daily returns and monthly contextual features using the `synthetic_data` function, which takes as input the number of assets, the number of contextual features, the random seed, the start date, and the end date. 
+
+```julia
+using ContextualPortfolio
+using Distributions, LinearAlgebra, Statistics, Dates, DataFrames, Random
+
+n_asset = 10  # number of assets
+n_features = 3  # number of contextual features
+start_date = Date(2005, 01, 01)  
+end_date = Date(2025, 12, 31)
+random_state = 0  # the control knob for reproducibility
+
+# generate daily returns and monthly features
+returns, features = synthetic_data(n_assets, n_features, random_state, start_date, end_date)
+
+```
+
+Following the structure described above, we obtain, for each case, the resulting portfolios over the evaluation horizon, together with the performance measures of each portfolio and the corresponding average and global metrics. Table 1 summarizes the global performance measures for the two cases. The results indicate that our approach improves both return and risk-adjusted performance while reducing risk.
+
+```text
+
+| Model | mean-variance |       
+| Metrics | Return | Volatility | CVaR | Sharp ratio | Omega ratio|
+| --- | ---: | ---: | ---: | ---: | ---: |
+| without context | 0.0742384 | 0.12709 | 0.15628 | 0.627528 | 1.59229 |
+| with context | 0.0847691 | 0.122842 | 0.126934 | 0.725273 | 1.68121 |
+
+```
+
+Using the turnover metric, which measures changes in portfolio composition between two consecutive periods, we analyze portfolio reactivity across rebalancing dates. The evolution is presented in Figure 1.
+We find that the turnover of the contextual model is generally higher than that of the classical model, indicating a more reactive management that better reflects market changes.
+
+![Turnover dynamics of classical and contextual portfolios][paper/figures/turnover_plot.png]
+
+For an initial investement of 100$, we show in Figure 2 the wealth evolution of the classical and contextual portfolios. Both strategies follow a similar upward trend over the investment horizon, but the contextual model generally achieves a slightly higher wealth trajectory, particularly toward the end of the sample. This suggests that incorporating contextual information can improve portfolio growth over time.
+
+![Evolution of portfolio wealth for classical and contextual strategies][paper/figures/wealth_plot.png]
+
 
 # Acknowledgements
 
@@ -120,3 +163,5 @@ for the tools that made this package possible.  Economic data used in examples
 is sourced from FRED (Federal Reserve Economic Data) and Tiingo.
 
 # References
+
+

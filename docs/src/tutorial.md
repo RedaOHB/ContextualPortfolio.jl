@@ -172,7 +172,7 @@ params = backtestParameters(
 
 Now, we solve the optimization problem by calling the main function:
 ```julia
-portfolios, portfolio_performance, global_performance = backtest_portfolio(params)
+portfolios, portfolio_performance, average_performance, global_performance = backtest_portfolio(params)
 ```
 
 ## Step 4: Analyze Results
@@ -191,9 +191,9 @@ Plot the changes of portfolio composition over time (turnover):
 ```julia
 using Plots
 
-dates = portfolio_performance.Start_Period
+dates = portfolio_performance.Performance[1].Start_Period
 
-plot(dates, portfolio_performance.turnover,
+plot(dates, portfolio_performance.Performance[1].turnover,
      xlabel="Dates",
      ylabel="Turnover",
      title="Portfolio Composition Evolution",
@@ -205,7 +205,7 @@ plot(dates, portfolio_performance.turnover,
 
 Plot the Herfindahl-Hirschman index (HHI) over time:
 ```julia
-plot(dates, portfolio_performance.HHI,
+plot(dates, portfolio_performance.Performance[1].HHI,
      xlabel="Dates",
      ylabel="HHI",
      title="Portfolio Diversification (HHI)",
@@ -217,7 +217,7 @@ Lower HHI values indicate better diversification (minimum is 1/N for equal weigh
 
 Plot the cumulative return over time:
 ```julia
-plot(dates, portfolio_performance.Return,
+plot(dates, portfolio_performance.Performance[1].Return,
      xlabel="Dates",
      ylabel="Return",
      title="Portfolio Performance",
@@ -230,14 +230,14 @@ Evaluate aggregated performance metrics over the rolling window approach:
 
 ```julia
 println("Global performance:")
-println("  Mean Return: ", round(global_performance.Mean_return[1] * 100, digits=2), "%")
+println("  Global Return: ", round(global_performance.global_Return[1] * 100, digits=2), "%")
 println("  Volatility: ", round(global_performance.Volatility[1] * 100, digits=2), "%")
 println("  Sharpe Ratio: ", round(global_performance.Sharpe_ratio[1], digits=2))
 println("  CVaR (95%): ", round(global_performance.CVaR[1] * 100, digits=2), "%")
 println("  Omega Ratio: ", round(global_performance.Omega_ratio[1], digits=2))
-println("  Average number of assets: ", round(global_performance.No_Assets[1], digits=3))
-println("  Average HHI: ", round(global_performance.HHI[1], digits=3))
-println("  Average Turnover: ", round(global_performance.turnover[1], digits=3))
+println("  Average number of assets: ", round(average_performance.mean_No_Assets[1], digits=3))
+println("  Average HHI: ", round(average_performance.mean_HHI[1], digits=3))
+println("  Average Turnover: ", round(average_performance.mean_turnover[1], digits=3))
 ```
 
 ## Complete Example
@@ -268,27 +268,27 @@ for i in 1:K
 end
 
 # Run backtest
-params = backtestParameters(
+params = BacktestParameters(
     estimation_horizon = 48,  # 48 months of estimation (4 years) 
     evaluation_horizon = 1,   # 1 month of validation
     returns = returns,
-    context = context,
+    context = context, 
     model = optimize_mv,
     η = 1.0,                  # moderate value of risk aversion
     start_date = Date(2015, 01, 01),
     end_date = Date(2024, 12, 31)
 )
 
-portfolios, portfolio_performance, global_performance = backtest_portfolio(params)
+portfolios, portfolio_performance, average_performance, global_performance = backtest_portfolio(params)
 
 # Evaluate performance    
 println("  Sharpe Ratio: ", round(global_performance.Sharpe_ratio[1], digits=2))
-println("  Average HHI: ", round(global_performance.HHI[1], digits=3))
+println("  Average HHI: ", round(average_performance.mean_HHI[1], digits=3))
 
 # Visualize returns
-dates = portfolio_performance.Start_Period
+dates = portfolio_performance.Performance[1].Start_Period
 
-plot(dates, portfolio_performance.Return,
+plot(dates, portfolio_performance.Performance[1].Return,
      xlabel="Dates",
      ylabel="Return",
      title="Portfolio Performance",

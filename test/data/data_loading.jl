@@ -157,7 +157,7 @@ function context_data(file_path, file_type, sheet_name)
           features = DataFrame([data[2:end, i] for i in 1:size(data, 2)], headers)
     else
         # Load contextual data from CSV file
-          features = CSV.read("file_name.csv", DataFrame)
+          features = CSV.read("file_path", DataFrame)
     end
 
     return features

@@ -79,16 +79,24 @@ $$\Omega = \frac{\sum_{t=1}^{T} \max(R_{t} - \tau, 0)}{\sum_{t=1}^{T} \max(\tau 
 
 At each rebalancing period, the algorithm advances the rolling window, re-estimates the conditional moments with updated data, and repeats the optimization process.
 
-#### Aggregated Performance Analysis
-For global portfolio evaluation, the algorithm computes summary statistics aggregated over the entire out-of-sample period. These aggregated metrics include:
+#### Average Performance Analysis
+To analyze how the strategy typically behaves from one rebalancing period to the next, the algorithm computes average performance by averaging the metrics obtained in each validation window. Average metrics include:
 
-- **Mean return**: Average of portfolio returns across all validation periods
-- **Volatility**: Standard deviation of the aggregated return series
-- **CVaR**: Conditional Value-at-Risk computed on the full return distribution
-- **Sharpe ratio**: Risk-adjusted return over the entire validation period
-- **Omega ratio**: Gain-loss ratio computed on the aggregated returns
+- **Mean Return**:  Average of the window-level portfolio returns
+- **Mean Volatility** & **Mean CVaR**: Average of the window-level risk measures
+- **Mean Sharpe ratio**: Average of the Sharpe ratios computed across rebalancing periods
+- **Mean Omega ratio**: Average of the Omega ratios computed across rebalancing periods
 - **Average number of assets**: Mean number of active positions across rebalancing periods
 - **Average HHI**: Mean diversification index across rebalancing periods
 - **Average turnover**: Mean portfolio turnover across consecutive rebalancing periods
 
-These aggregated metrics provide a comprehensive assessment of the strategy's performance, risk characteristics, and trading behavior over the backtest horizon
+#### Aggregated Performance Analysis
+For global portfolio evaluation, the algorithm computes summary statistics aggregated over the entire out-of-sample period. These aggregated metrics include:
+
+- **Global return**: Total compounded return over the full backtest horizon
+- **Volatility**: Standard deviation of the full out-of-sample return series
+- **CVaR**: Conditional Value-at-Risk computed on the full return distribution
+- **Sharpe ratio**: Risk-adjusted return over the entire validation period
+- **Omega ratio**: Gain-loss ratio computed on the full aggregated returns
+
+These aggregated metrics provide a comprehensive assessment of the strategy's overall performance, risk characteristics, and trading behavior over the backtest horizon
