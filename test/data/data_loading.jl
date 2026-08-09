@@ -16,7 +16,7 @@ particularly the Tiingo API for historical returns.
    - `assets`: List of stock tickers (e.g., ["AAPL", "MSFT", "GOOGL"])
    - `start_date`: Start date for historical data
    - `end_date`: End date for historical data
-   - `API_key`: 
+   - `API_key`: The api_key from Tiingo
    - `frequency`: Frequency of data (daily, weekly, monthly, quarterly or annually)
 
   # Results :
@@ -37,7 +37,7 @@ particularly the Tiingo API for historical returns.
 
    - Requires a Tiingo API key (free tier available at https://www.tiingo.com)
    - Data is alligned by date across all tickers
-   - returns are on a daily basis. You can the basis in `url`
+   - returns are on a daily basis. You can change the basis in `url`
 
 """
  

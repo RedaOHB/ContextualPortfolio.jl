@@ -13,7 +13,7 @@ include("models.jl")
 include("backtest.jl")
 
 # Export types
-export backtestParameters
+export Backtest_Parameters
 
 # Export optimization models
 export optimize_mv, optimize_mvbu, optimize_mveu

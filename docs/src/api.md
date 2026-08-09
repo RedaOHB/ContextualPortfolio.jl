@@ -54,7 +54,7 @@ optimize_mveu
 ```
 
 ## Utility Functions 
-```@docs
+```@docs 
 split_sample
 ```
 ```@docs

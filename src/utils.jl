@@ -7,7 +7,7 @@
   # Parameters :
 
    - `data_1`: a DataFrame containing observations, where the first column represents the date (e.x., historical returns)
-   - `context`: a DataFrame containing observations, where the first column represents the date (e.x., contextul features)
+   - `data_2`: a DataFrame containing observations, where the first column represents the date (e.x., contextul features)
 
   # Results :
 

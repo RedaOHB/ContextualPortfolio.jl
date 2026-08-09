@@ -28,11 +28,11 @@ portfolio optimization framework.  Unlike traditional portfolio optimization,
 which treats expected returns and covariances as fixed inputs, contextual
 optimization conditions these estimates on observable side information such as
 macroeconomic indicators or market signals.  The package provides three
-mean--variance optimization models---standard, box-uncertainty robust, and
+mean--variance [@Markowitz1952] optimization models---standard, box-uncertainty robust [@fabozzi2007], and
 ellipsoidal-uncertainty robust---together with a rolling-window backtesting
 engine that evaluates out-of-sample performance with comprehensive risk and
-return metrics.
-
+return metrics [@zivot2003modelling].
+ 
 # Statement of Need
 
 Portfolio optimization is a cornerstone of quantitative finance, yet
@@ -48,7 +48,7 @@ optimization, the package implements the contextual optimization framework
 of @Nguyen2024 in a single, easy-to-use interface.  It ships with robust
 variants that account for estimation uncertainty via box and ellipsoidal
 uncertainty sets, following the robust optimization principles described
-by @BenTal2009.  The rolling-window backtesting engine automates the
+by [@BenTal2009].  The rolling-window backtesting engine automates the
 train/validate cycle and produces a comprehensive set of performance metrics
 (Sharpe ratio, CVaR, Omega ratio, HHI, turnover), enabling reproducible
 empirical studies.

@@ -19,9 +19,10 @@ end
   backtest_portfolio(params::Backtest_Parameters)
 
   runs a portfolio backtest using a rolling rebalancing strategy. The function takes its inputs
-  from the BacktestParameters structure and returns:
+  from the Backtest_Parameters structure and returns:
    - the sequence of portfolios generated over the rolling window
    - the corresponding performance measures for each portfolio
+   - the average performance over the full evaluation period
    - the aggregated (overall) performance over the full evaluation period
 
   # Parameters:
@@ -36,7 +37,7 @@ end
    - `end_date`: ending date of the dataset
    - `optimizer`: JuMP-compatible solver (default: `Clarabel.Optimizer`)
 
-"""
+"""                               
 
 function backtest_portfolio(params::Backtest_Parameters)
 

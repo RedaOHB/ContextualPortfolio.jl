@@ -44,7 +44,7 @@ ContextualPortfolio.jl requires two main data inputs, returns and contextual inf
 You can load historical returns from various sources. For convenience, we provide a helper function to load historical returns from the Tiingo financial data API. This function is available in the [test directory](https://github.com/RedaOHB/ContextualPortfolio.jl/tree/main/test/data).
 ```julia 
 # Include the data loading utilities
-  include("test/data/data_loading.jl")  
+ include("test/data/data_loading.jl")     
 
 # Load historical returns from Tiingo
   Assets = ["AAPL", "MSFT", "GOOGL", "AMZN", "META"]
@@ -84,7 +84,7 @@ For a consistent and reliable setup, historical returns can be provided at eithe
 **Aligning contextual features**
 Ensure that all contextual data are aligned by date for subsequent processing:
 ```julia
-context = innerjoin(feature_1, feature_2, feature_3; on=:Date)
+context = innerjoin(feature_1, feature_2, feature_3; on=:Date_column)
 ```
 
 **Aligning returns and contextual features**
@@ -159,7 +159,7 @@ Now we can run the backtest using our prepared data and chosen model. Before cal
 The structure is defined as follows:
 ```julia
 params = backtestParameters(
-    estimation_horizon = 48,  # 4 years of estimation (48 months) 
+    estimation_horizon = 48,  # 48 months of estimation (4 years) 
     evaluation_horizon = 1,   # 1 month of validation
     returns = returns,
     context = context,
@@ -179,7 +179,7 @@ portfolios, portfolio_performance, average_performance, global_performance = bac
 
 ### View Performance Metrics
 
-The backtest returns three objects: all portfolios constructed within the rolling window approach, performance metrics of each portfolio, and global performance:
+The backtest returns four objects: all portfolios constructed within the rolling window approach, performance metrics of each portfolio, average and global performance:
 ```julia
 println("Performance metrics of all portfolios:")
 println(portfolio_performance)
@@ -191,9 +191,9 @@ Plot the changes of portfolio composition over time (turnover):
 ```julia
 using Plots
 
-dates = portfolio_performance.Performance[1].Start_Period
+dates = portfolio_performance.Start_Period
 
-plot(dates, portfolio_performance.Performance[1].turnover,
+plot(dates, portfolio_performance.turnover,
      xlabel="Dates",
      ylabel="Turnover",
      title="Portfolio Composition Evolution",
@@ -205,7 +205,7 @@ plot(dates, portfolio_performance.Performance[1].turnover,
 
 Plot the Herfindahl-Hirschman index (HHI) over time:
 ```julia
-plot(dates, portfolio_performance.Performance[1].HHI,
+plot(dates, portfolio_performance.HHI,
      xlabel="Dates",
      ylabel="HHI",
      title="Portfolio Diversification (HHI)",
@@ -217,7 +217,7 @@ Lower HHI values indicate better diversification (minimum is 1/N for equal weigh
 
 Plot the cumulative return over time:
 ```julia
-plot(dates, portfolio_performance.Performance[1].Return,
+plot(dates, portfolio_performance.Return,
      xlabel="Dates",
      ylabel="Return",
      title="Portfolio Performance",
@@ -286,9 +286,9 @@ println("  Sharpe Ratio: ", round(global_performance.Sharpe_ratio[1], digits=2))
 println("  Average HHI: ", round(average_performance.mean_HHI[1], digits=3))
 
 # Visualize returns
-dates = portfolio_performance.Performance[1].Start_Period
+dates = portfolio_performance.Start_Period
 
-plot(dates, portfolio_performance.Performance[1].Return,
+plot(dates, portfolio_performance.Return,
      xlabel="Dates",
      ylabel="Return",
      title="Portfolio Performance",

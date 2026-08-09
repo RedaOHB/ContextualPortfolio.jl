@@ -68,13 +68,14 @@ Load historical returns from Tiingo API.
 
 **Results:** DataFrame with Date column and return columns for each ticker.
 
-### `context_data(file_path, file_type)`
+### `context_data(file_path, file_type, sheet_name)`
 
 Load contextual features from Excel or CSV file.
 
 **Parameters:**
 - `file_path`: Path to data file
 - `file_type`: `"xlsx"` or `"csv"`
+- `sheet_name`: Name of data sheet
 
 **Results:** DataFrame with contextual features.
 
@@ -84,7 +85,7 @@ See `example_usage.jl` for complete examples.
 
 ### Basic Usage
 ```julia
-include("data_loading.jl")
+include("test/data/data_loading.jl")
 using Dates
 
 # Load historical returns
@@ -92,7 +93,7 @@ tickers = ["AAPL", "NKE", "GOOGL", "AMZN", "META"]
 returns = historical_returns(tickers, Date(2020,01,01), Date(2024,12,31),"your_api_key", "daily")
 
 # Load context features
-context = context_data("Features_example.csv", "csv")
+context = context_data("Features_example.csv", "csv", "sheet_name")
 ```
 
 ## Data sources

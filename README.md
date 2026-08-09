@@ -33,7 +33,7 @@ using DataFrames, Dates
 
 # Load your data (returns and contextual features) 
 returns = historical_returns(Assets, start_date, end_date, Api_key, frequency) 
-context = context_data(file_path, file_type) 
+context = context_data(file_path, file_type, sheet_name) 
 # Define optimization model
 model = optimize_mv # Mean Variance model 
 # Or "optimize_mvbu" for Mean Variance with Box Uncertainty 
@@ -41,7 +41,7 @@ model = optimize_mv # Mean Variance model
 
 # Run backtest 
   # Define the parameters structure 
-  Parameters = backtestParameters( 
+  Parameters = Backtest_Parameters(  
                estimation_horizon = 48, 
                evaluation_horizon = 1, 
                returns = returns, 
@@ -54,9 +54,9 @@ model = optimize_mv # Mean Variance model
   Portfolios, Performance_metrics, Average_performance, Global_performance = backtest_portfolio(Parameters) 
 
 # Evaluate performance
-println("Average return: ", Global_performance.Mean_return[1])
+println("Average return: ", Average_performance.mean_Return[1])
 println("Sharpe ratio: ", Global_performance.Sharpe_ratio[1])
-println("Average HHI: ", Global_performance.HHI[1])
+println("Average HHI: ", Average_performance.HHI[1])
 ```
 
 ## Methodology
@@ -123,7 +123,7 @@ Assets = ["AAPL", "IBM", "GOOGL", "META", "AMZN"]
 returns = historical_returns(Assets, Date(2020,01,01), Date(2024,12,31), api_key, "daily")
 
 # Load contextual features from FRED data
-context = context_data("test/data/Features_example.csv", "csv")
+context = context_data("test/data/Features_example.csv", "csv", "sheet1")
 
 ```
 
@@ -156,7 +156,7 @@ for i in 1:n_context
 end
 
 # Run backtest with mean-variance 
-Parameters = backtestParameters( 
+Parameters = Backtest_Parameters( 
                 estimation_horizon = 48,  # 48 months of estimation
                 evaluation_horizon = 1,   # 1 month of evaluation
                 returns = returns, 
@@ -175,12 +175,12 @@ println("  Volatility: ", round(Global_performance.Volatility[1] * 100, digits=2
 println("  Sharpe Ratio: ", round(Global_performance.Sharpe_ratio[1], digits=2))
 println(" Diversification index: ", round(Average_performance.mean_HHI[1], digits=2))
 
-# Plot cumulative returns
-dates = Portfolio_performance.Performance[1].Start_Period
+# Plot return
+dates = Portfolio_performance.Start_Period
 
-plot(dates, Portfolio_performance.Performance[1].Return, 
+plot(dates, Portfolio_performance.Return, 
    xlabel="Dates",
-   ylabel="Cumulative Return",
+   ylabel="Return",
    title="Portfolio Performance",
    linewidth=2)
 
@@ -193,11 +193,11 @@ You can use any JuMP-compatible QP solver by passing the `optimizer` keyword:
 
 ```julia
 # Default (Clarabel — no license required)
-Parameters = backtestParameters(estimation_horizon=48, ...) 
+Parameters = Backtest_Parameters(estimation_horizon=48, ...) 
 
 # Using Gurobi (requires a license)
 using Gurobi
-Parameters = backtestParameters(estimation_horizon=48, ..., optimizer=Gurobi.Optimizer)
+Parameters = Backtest_Parameters(estimation_horizon=48, ..., optimizer=Gurobi.Optimizer)
 
 # Or pass the optimizer directly to a model function
 x = optimize_mv(μ, Σ, η; optimizer=Gurobi.Optimizer)

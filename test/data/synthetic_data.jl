@@ -1,6 +1,25 @@
 using Distributions, LinearAlgebra, Statistics, Dates, DataFrames
 using Random
- 
+
+"""
+   synthetic_data(n_assets::Int, n_features::Int, random_state::Int, start_date::Date, end_date::Date)
+
+  Generates synthetic returns (daily) and contextual features (monthly).
+
+  # Parameters: 
+
+   - `n_assets`: Number of assets 
+   - `n_features`: Number of contextual features
+   - `random_state`: Reproductibility state
+   - `start_date`: Start date for historical data
+   - `end_date`: End date for historical data
+   
+  # Results :
+
+   - `DataFrame1`: DataFrame with Date column and return columns for each ticker
+   - `DataFrame2`: DataFrame with Date column and contxtual features
+
+"""
 
 function synthetic_data(n_assets, n_features, random_state, start_date, end_date)
 

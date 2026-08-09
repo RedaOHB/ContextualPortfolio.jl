@@ -2,7 +2,7 @@
 * A julia package for contextual optimization and backtesting 
 
 ## Overview
-```ContextualPortfolio.jl``` is a Julia package for portfolio optimization that incorporate external factors into the decision-making process. The package supports multiple optimization models including mean-variance, CVaR, and robust optimization. It provides comprehensive tools for performance evaluation and backtesting.
+```ContextualPortfolio.jl``` is a Julia package for portfolio optimization that incorporate external factors into the decision-making process. The package supports multiple optimization models including mean-variance, and robust optimization. It provides comprehensive tools for performance evaluation and backtesting.
 
 Contextual optimization is an approach where decisions are tailored based on specific contextual information. In portfolio selection, the traditional problem seeks to determine optimal asset weights that maximize (or minimize) a specific objective function. Contextual optimization extends this framework by incorporating external information such as market conditions, economic indicators, or other relevant features directly into the optimization process.
 
@@ -66,9 +66,9 @@ Depth = 2
 
 ## Citation
 
-If you use ContextualPortfolio.jl in your research, please cite:
+If you use ContextualPortfolio.jl in your research, please cite:         
 
-```bibtex
+```bibtex  
 @article{RedaOuahib2026,
   title={ContextualPortfolio.jl: A Julia Package for contextual optimization},
   author={Reda Ouahib and Fabian Bastin},

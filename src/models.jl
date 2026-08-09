@@ -69,7 +69,7 @@ end
                                        s.t   1ᵀ𝐱 = 1
                                                𝐱 ≥ 0
 
-  where ϵ: the size (radius) of the ellipsoidal uncertainty set
+  where ϵ: the size (radius) of the box uncertainty set
 
 """
 
@@ -137,7 +137,7 @@ function optimize_mveu(μ, Σ, η, data; optimizer=Clarabel.Optimizer)
     end
     # Convert variance of returns into variance of the estimation error of the mean:
     # Var(μ̂) = σ² / T
-    # where T = number of observations
+    # where T = number of observations    
 
     χ₂ = Chisq(n)   # the chi-square distribution with n degrees of freedom
     𝒒_alpha = quantile(χ₂, 0.95)   # 95% quantile of the chi-square distribution
